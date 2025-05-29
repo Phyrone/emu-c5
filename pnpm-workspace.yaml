@@ -1,0 +1,7 @@
+packages:
+  - services/*
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - protobufjs
+  - vue-demi

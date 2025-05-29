@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package common;
+
+message Selector{
+  optional string domain = 1;
+  fixed64 id = 2;
+}

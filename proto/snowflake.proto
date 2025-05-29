@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package snowflake;
+
+message SnowflakeIdRequest {
+  optional uint32 count = 1;
+}
+message SnowflakeIdResponse {
+  repeated uint64 ids = 1;
+}
+service SnowflakeService{
+  rpc SnowflakeID(SnowflakeIdRequest) returns (SnowflakeIdResponse);
+}

@@ -1,0 +1,11 @@
+[package]
+name = "emu-service-auth"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+readme.workspace = true
+
+[dependencies]

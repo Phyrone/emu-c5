@@ -1,0 +1,5 @@
+
+[alias]
+ctl = "run -p emuctl --bin emuctl --"
+emuctl = "run -p emuctl --bin emuctl --"
+utils = "run -p dev-utils --bin dev-utils --"

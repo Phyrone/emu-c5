@@ -1,0 +1,107 @@
+# A docker compose file used for development evnvironments to run required services
+services:
+  postgres:
+    image: postgres:17
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: emu
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: emu
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  auth_kv:
+    image: valkey/valkey:alpine
+    restart: always
+    working_dir: /data
+    ports:
+      - "7777:7777"
+    volumes:
+      - auth_kv_data:/data
+    command: [ "valkey-server","--port","7777" ]
+
+  nats:
+    image: nats:latest
+    restart: always
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+    command: [ "-m", "8222", "-js", "-sd", "/data" ]
+    volumes:
+      - nats_data:/data
+
+  #citus_cordinator:
+  #  image: citusdata/citus
+  #  restart: unless-stopped
+  #  ports:
+  #    - "5432:5432"
+  #  environment:
+  #    POSTGRES_USER: emu
+  #    POSTGRES_PASSWORD: password
+  #    POSTGRES_DB: emu
+  #  volumes:
+  #    - citus_cordinator:/var/lib/postgresql/data
+  #citus_worker1:
+  #  image: citusdata/citus
+  #  restart: unless-stopped
+  #  ports:
+  #    - "5433:5432"
+  #  environment:
+  #    POSTGRES_USER: emu
+  #    POSTGRES_PASSWORD: password
+  #    POSTGRES_DB: emu
+  #  volumes:
+  #    - citus_worker1:/var/lib/postgresql/data
+  #citus_worker2:
+  #  image: citusdata/citus
+  #  restart: unless-stopped
+  #  ports:
+  #    - "5434:5432"
+  #  environment:
+  #    POSTGRES_USER: emu
+  #    POSTGRES_PASSWORD: password
+  #    POSTGRES_DB: emu
+  #  volumes:
+  #    - citus_worker2:/var/lib/postgresql/data
+  #citus_worker3:
+  #  image: citusdata/citus
+  #  restart: unless-stopped
+  #  ports:
+  #    - "5435:5432"
+  #  environment:
+  #    POSTGRES_USER: emu
+  #    POSTGRES_PASSWORD: password
+  #    POSTGRES_DB: emu
+  #  volumes:
+  #    - citus_worker3:/var/lib/postgresql/data
+  minio:
+    image: minio/minio
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_REGION_NAME: eu-central-1
+      MINIO_CONSOLE_ADDRESS: ":9001"
+    command: server /data
+    volumes:
+      - minio_data:/data
+
+
+volumes:
+  postgres_data:
+  auth_kv_data:
+  minio_data:
+  nats_data:
+  citus_cordinator:
+  #citus_worker1:
+  #citus_worker2:
+  #citus_worker3:
+
+  scylla_data_1:
+  scylla_data_2:
+  scylla_data_3:

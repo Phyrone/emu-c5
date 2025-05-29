@@ -1,0 +1,8 @@
+[package]
+name = "emu-build"
+description = "This crate contains variouse build utilities for the emu project."
+version.workspace = true
+edition.workspace = true
+
+
+[dependencies]

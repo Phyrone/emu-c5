@@ -1,0 +1,111 @@
+[workspace]
+resolver = "2"
+members = [
+    # Shared
+    "shared/database",
+    "shared/database/migration",
+    "shared/grpc",
+    "shared/build",
+    # Services
+    "services/auth",
+    "services/snowflake",
+    # Other
+    "dev-utils"
+]
+
+[workspace.package]
+version = "0.0.1-dev"
+edition = "2024"
+publish = false
+authors = ["Samuel Laqua (Phyrone) <phyrone@phyrone.de>"]
+license = "EUPL-1.2"
+homepage = "www.phyrone.de"
+readme = "README.md"
+
+[workspace.dependencies]
+# Workspace
+emu-shared-database = { path = "shared/database" }
+emu-shared-database-migration = { path = "shared/database/migration" }
+emu-shared-grpc = { path = "shared/grpc" }
+
+# Core
+chrono = { version = "0.4", features = ["default", "serde", "now"] }
+tempfile = { version = "3.20", features = ["getrandom"] }
+rand = { version = "0.9", features = ["std"] }
+fastrand = { version = "2.3" }
+
+# Utils
+hexafreeze = { version = "0.5" }
+postgresql_embedded = { version = "0.18", features = ["indicatif"] }
+
+#
+arti = { version = "1.4", features = ["full"] }
+
+# Cli
+dotenvy = { version = "0.15", features = ["clap"] }
+clap = { version = "4.5", features = ["env", "cargo", "derive", "string", "unicode"] }
+clap-num = { version = "1.2" }
+clap-verbosity-flag = { version = "3.0", features = ["tracing", "log"] }
+
+
+# Async, Network, IO and Concurrency
+tokio = { version = "1.44", features = ["full", "mio", "tracing"] }
+futures-lite = { version = "2.6", features = [] }
+
+# Protobuf
+prost = { version = "0.13", features = ["prost-derive"] }
+tonic = { version = "0.13", features = ["zstd", "gzip", "deflate", "tls-ring"] }
+tonic-types = { version = "0.13" }
+tonic-build = { version = "0.13", features = [] }
+
+# Database
+nanoid = { version = "0.4" }
+sea-orm = { version = "1.1", features = [
+    # Runtime
+    "runtime-tokio", "runtime-tokio-rustls",
+    # Database
+    "sqlx-all",
+    # Types
+    "with-uuid", "with-json", "serde_json", "with-chrono",
+] }
+sea-orm-migration = { version = "1.1", features = [
+    # Runtime
+    "runtime-tokio", "runtime-tokio-rustls",
+    # Database
+    "sqlx-sqlite", "sqlx-postgres", "sqlx-mysql",
+    # Types
+    "with-uuid", "with-json", "with-chrono"
+] }
+sea-schema = { version = "0.16", features = ["log", "runtime-tokio", "sqlx-all", "with-serde"] }
+sea-orm-codegen = { version = "1.1" }
+sea-query = { version = "0.32", features = ["all-types", "all-features"] }
+sqlx = { version = "0.8", features = ["all-databases", "uuid", "regexp", "runtime-tokio", "chrono", "bit-vec", "runtime-tokio-rustls"] }
+seaography = { version = "1.1", features = [
+    "with-chrono", "with-json", "with-uuid", "with-postgres-array"
+] }
+
+# Error Handling
+error-stack = { version = "0.5", features = ["serde"] }
+thiserror = "2.0"
+
+# Serde
+serde = { version = "1.0", features = ["alloc", "derive", "rc"] }
+
+
+# Logging and Tracing
+sentry = { version = "0.38", features = ["anyhow", "log", "tower", "tracing"] }
+tracing = { version = "0.1", features = ["log"] }
+pretty_env_logger = { version = "0.5" }
+
+# Testing and Benches
+rstest = { version = "0.25", features = ["async-timeout", "crate-name"] }
+criterion = { version = "0.6", features = ["rayon", "async_tokio", "html_reports"] }
+
+
+
+[profile.dev]
+incremental = true
+
+[profile.release]
+opt-level = 3
+lto = "fat"

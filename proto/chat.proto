@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package chat;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "common.proto";
+
+message SendMessageRequest{
+  common.Selector channel = 1;
+
+
+}
+message SendMessageResponse{
+
+}
+
+message GetMessagesRequest{
+  common.Selector channel = 1;
+
+}
+message GetMessagesResponse{
+
+}
+
+service ChatService{
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse);
+
+
+}

@@ -1,0 +1,427 @@
+use crate::extension::postgres::Type;
+use crate::sea_orm::{EnumIter, Iterable};
+use sea_orm_migration::{prelude::*, schema::*};
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(UserContent::Table)
+                    .col(
+                        ColumnDef::new(UserContent::Id)
+                            .big_integer()
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(UserContent::AuthorId)
+                            .big_integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(UserContent::CreatedAt)
+                            .timestamp()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(UserContent::UpdatedAt)
+                            .timestamp()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(UserContent::Checksum).string().not_null())
+                    .col(
+                        ColumnDef::new(UserContent::Metadata)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Profile::Table)
+                    .col(
+                        ColumnDef::new_with_type(Profile::Id, ColumnType::BigInteger)
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Profile::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Profile::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Profile::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Profile::UserId).big_integer().not_null())
+                    .col(ColumnDef::new(Profile::Name).string().not_null())
+                    .col(ColumnDef::new(Profile::ProfilePicture).big_integer().null())
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Guild::Table)
+                    .col(
+                        ColumnDef::new(Guild::Id)
+                            .big_integer()
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Guild::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Guild::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Guild::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Guild::OwnerId).big_integer().not_null())
+                    .col(ColumnDef::new(Guild::Name).string().not_null())
+                    .col(ColumnDef::new(Guild::Icon).big_integer().null())
+                    .col(ColumnDef::new(Guild::Banner).big_integer().null())
+                    .col(
+                        ColumnDef::new(Guild::Description)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Guild::Table)
+                            .from_col(Guild::OwnerId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Guild::Table)
+                            .from_col(Guild::Banner)
+                            .to_tbl(UserContent::Table)
+                            .to_col(UserContent::Id)
+                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Guild::Table)
+                            .from_col(Guild::Icon)
+                            .to_tbl(UserContent::Table)
+                            .to_col(UserContent::Id)
+                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+        manager
+            .create_type(
+                Type::create()
+                    .values(ChannelTypeValues::iter())
+                    .as_enum(ChannelType::Table)
+                    .to_owned(),
+            ).await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Channel::Table)
+                    .col(
+                        ColumnDef::new(Channel::Id)
+                            .big_integer()
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Channel::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Channel::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Channel::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Channel::GuildId).big_integer().null())
+                    .col(ColumnDef::new(Channel::ParentId).big_integer().null())
+                    .col(ColumnDef::new(Channel::Name).string().not_null())
+                    .col(ColumnDef::new(Channel::Type).custom(ChannelType::Table)
+                        .not_null())
+                    .to_owned(),
+            )
+            .await?;
+        manager
+            .create_table(
+                Table::create()
+                    .table(Message::Table)
+                    .col(
+                        ColumnDef::new_with_type(Message::Id, ColumnType::BigInteger)
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Message::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Message::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Message::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Message::AuthorId).big_integer().not_null())
+                    .col(ColumnDef::new(Message::ChannelId).big_integer().not_null())
+                    .col(ColumnDef::new(Message::ReplyToId).big_integer().null())
+                    .col(
+                        ColumnDef::new(Message::Payload)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .col(
+                        ColumnDef::new(Message::Metadata)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Message::Table)
+                            .from_col(Message::AuthorId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Message::Table)
+                            .from_col(Message::ChannelId)
+                            .to_tbl(Channel::Table)
+                            .to_col(Channel::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Message::Table)
+                            .from_col(Message::ReplyToId)
+                            .to_tbl(Message::Table)
+                            .to_col(Message::Id)
+                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned()
+            ).await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Post::Table)
+                    .col(
+                        ColumnDef::new_with_type(Post::Id, ColumnType::BigInteger)
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Post::AuthorId).big_integer().not_null())
+                    .col(ColumnDef::new(Post::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Post::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Post::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Post::Title).string().not_null())
+                    .col(
+                        ColumnDef::new(Post::Payload)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .col(
+                        ColumnDef::new(Post::Metadata)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Post::Table)
+                            .from_col(Post::AuthorId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Comment::Table)
+                    .col(
+                        ColumnDef::new_with_type(Comment::Id, ColumnType::BigInteger)
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Comment::AuthorId).big_integer().not_null())
+                    .col(ColumnDef::new(Comment::PostId).big_integer().not_null())
+                    .col(ColumnDef::new(Comment::ParentId).big_integer().null())
+                    .col(ColumnDef::new(Comment::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Comment::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Comment::DeletedAt).timestamp())
+                    .col(
+                        ColumnDef::new(Comment::Payload)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .col(
+                        ColumnDef::new(Comment::Metadata)
+                            .json_binary()
+                            .not_null()
+                            .default(Value::Json(None)),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Comment::Table)
+                            .from_col(Comment::AuthorId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Comment::Table)
+                            .from_col(Comment::PostId)
+                            .to_tbl(Post::Table)
+                            .to_col(Post::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Comment::Table)
+                            .from_col(Comment::ParentId)
+                            .to_tbl(Comment::Table)
+                            .to_col(Comment::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        Ok(())
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .await?;
+
+        Ok(())
+    }
+}
+
+#[derive(DeriveIden)]
+enum Profile {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    UserId,
+    Name,
+    ProfilePicture,
+    //ProfileBanner,
+}
+#[derive(DeriveIden)]
+enum UserContent {
+    Table,
+    Id,
+    AuthorId,
+    CreatedAt,
+    UpdatedAt,
+    Checksum,
+    Metadata,
+}
+
+#[derive(DeriveIden)]
+enum Guild {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    OwnerId,
+    Name,
+    Icon,
+    Banner,
+    Description,
+}
+
+#[derive(DeriveIden)]
+enum ChannelType{
+    Table,
+}
+
+#[derive(EnumIter,Iden)]
+enum ChannelTypeValues {
+    Direct,
+    Dummy,
+    Text,
+    Voice,
+    Stage,
+    Feed,
+    Forum,
+}
+
+#[derive(DeriveIden)]
+enum Channel {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    GuildId,
+    ParentId,
+    Name,
+    Type,
+}
+
+#[derive(DeriveIden)]
+enum Message{
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    AuthorId,
+    ChannelId,
+    ReplyToId,
+    Payload,
+    Metadata,
+
+}
+
+#[derive(DeriveIden)]
+enum Post {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    AuthorId,
+    Title,
+    Payload,
+    Metadata,
+}
+
+#[derive(DeriveIden)]
+enum Comment {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    AuthorId,
+    PostId,
+    ParentId,
+    Payload,
+    Metadata,
+}

@@ -1,0 +1,17 @@
+[package]
+name = "emu-service-snowflake-id-generator"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+clap.workspace = true
+tracing.workspace = true
+sentry.workspace = true
+chrono.workspace = true
+hexafreeze.workspace = true
+emu-shared-grpc.workspace = true
+tonic.workspace = true
+clap-num.workspace = true
+tokio.workspace = true
+pretty_env_logger.workspace = true
+clap-verbosity-flag.workspace = true

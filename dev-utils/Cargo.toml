@@ -1,0 +1,23 @@
+[package]
+name = "dev-utils"
+description = "Utilities during development of the emu project."
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+emu-shared-database-migration.workspace = true
+
+clap.workspace = true
+clap-verbosity-flag.workspace = true
+postgresql_embedded.workspace = true
+random-port = "0.1.1"
+sqlx.workspace = true
+tempfile.workspace = true
+sea-orm-codegen.workspace = true
+sea-orm-migration.workspace = true
+sea-schema.workspace = true
+tokio.workspace = true
+futures-lite.workspace = true
+sea-orm.workspace = true
+pretty_env_logger.workspace = true
+tracing.workspace = true
