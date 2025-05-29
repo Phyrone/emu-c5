@@ -1,5 +1,5 @@
 use crate::database::TempPostgres;
-use crate::startup::StartupParams;
+use crate::startup::{StartupParams, StartupSubcommand};
 use clap::Parser;
 use emu_shared_database_migration::{MIGRATIONS_TABLE_NAME, Migrator};
 use sea_orm_codegen::{
@@ -27,23 +27,23 @@ async fn main() {
         .init();
     debug!("params: {:?}", &params);
 
-    let postgres = TempPostgres::new().await;
-
-    let test_db = postgres.database("test").await;
-
-    let project_dir = PathBuf::from_str(WORKDIR)
-        .unwrap()
-        .parent()
-        .unwrap()
-        .to_path_buf();
-
-    let db_orm_dir = project_dir
-        .join("shared")
-        .join("database")
-        .join("src")
-        .join("orm");
-
-    pg_generate_entities::<Migrator>(db_orm_dir, &test_db.pool()).await;
+    match &params.command {
+        StartupSubcommand::GenerateEntities => {
+            let postgres = TempPostgres::new().await;
+            let test_db = postgres.database("test").await;
+            let project_dir = PathBuf::from_str(WORKDIR)
+                .unwrap()
+                .parent()
+                .unwrap()
+                .to_path_buf();
+            let db_orm_dir = project_dir
+                .join("shared")
+                .join("database")
+                .join("src")
+                .join("orm");
+            pg_generate_entities::<Migrator>(db_orm_dir, test_db.pool()).await;
+        }
+    }
 }
 
 async fn pg_generate_entities<M: MigratorTrait>(
