@@ -11,15 +11,15 @@ const THEME_DATA_ATTRIBUTE = 'data-theme';
 export const DEFAULT_THEME = 'default';
 export const available_themes = [DEFAULT_THEME, ...Object.keys(themes)].toSorted();
 
-export const theme_store = cookie_store<string>(THEME_COOKIE_NAME, 'default', {
+export const current_theme = cookie_store<string>(THEME_COOKIE_NAME, 'default', {
 	codec: 'plain'
 });
 
 if (browser) {
-	theme_store.subscribe((theme) => {
+	current_theme.subscribe((theme) => {
 		if (!available_themes.includes(theme)) {
 			console.warn(`Invalid theme ID: ${theme}. Defaulting to 'default'.`);
-			theme_store.set('default');
+			current_theme.set('default');
 			theme = 'default';
 		}
 		let html_element = document.querySelector('html');

@@ -330,6 +330,15 @@ enum Profile {
     ProfilePicture,
     //ProfileBanner,
 }
+
+#[derive(DeriveIden)]
+enum BlobStore{
+    Table,
+    Id,
+    
+    
+}
+
 #[derive(DeriveIden)]
 enum UserContent {
     Table,
