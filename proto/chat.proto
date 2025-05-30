@@ -22,9 +22,13 @@ message GetMessagesResponse{
 
 }
 
+message ChatMessageEvent{
+
+}
+
 service ChatService{
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
   rpc GetMessages(GetMessagesRequest) returns (GetMessagesResponse);
-
+  rpc SubscribeToMessages(common.Selector) returns (stream ChatMessageEvent);
 
 }
