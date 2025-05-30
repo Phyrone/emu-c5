@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package auth;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "common.proto";
+
+
+message CredentialsLoginRequest{
+  // Email or Username to login with.
+  string user_or_email = 1;
+  // Password to login with.
+  string password = 2;
+  // Optional.
+  optional string one_time_password = 3;
+
+  // Optional. If set, manual specify the expiration time of the session.
+  optional google.protobuf.Timestamp session_expiration = 4;
+
+}
+message LoginResponse{
+  message LoginSuccess{
+    // A JWT like token that can be used to authenticate future requests.
+    string token = 1;
+  }
+
+  // Enum for the different login failure codes.
+  // Loosely based on HTTP status codes (dont ask why).
+  enum LoginFailureCode{
+    LOGIN_FAILURE_UNSPECIFIED = 0;
+    LOGIN_FAILURE_USER_NOT_FOUND = 404;
+    LOGIN_FAILURE_INVALID_PASSWORD = 401;
+    LOGIN_FAILURE_INVALID_ONE_TIME_PASSWORD = 428;
+    LOGIN_FAILURE_ACCOUNT_DISABLED = 410;
+
+    LOGIN_FAILURE_TOO_MANY_REQUESTS = 429;
+  }
+  message LoginFailure{
+    /// A machine readable error code.
+    LoginFailureCode code = 1;
+    /// A human readable error message.
+    optional string error = 2;
+  }
+  enum LoginErrorCode{
+    LOGIN_ERROR_UNSPECIFIED = 0;
+  }
+  message LoginError{
+    /// A machine readable error code.
+    LoginErrorCode code = 1;
+    /// A human readable error message.
+    string message = 2;
+  }
+  oneof response{
+    LoginSuccess success = 1;
+    LoginFailure failure = 2;
+    LoginError error = 3;
+  }
+}
+
+service AuthService{
+  rpc CredentialsLogin(CredentialsLoginRequest) returns (LoginResponse);
+
+
+}

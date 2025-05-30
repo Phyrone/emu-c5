@@ -9,3 +9,5 @@ homepage.workspace = true
 readme.workspace = true
 
 [dependencies]
+tokio.workspace = true
+emu-shared-grpc.workspace = true

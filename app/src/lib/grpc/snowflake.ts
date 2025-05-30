@@ -5,222 +5,214 @@
 // source: snowflake.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
-export const protobufPackage = 'snowflake';
+export const protobufPackage = "snowflake";
 
 export interface SnowflakeIdRequest {
-	count?: number | undefined;
+  count?: number | undefined;
 }
 
 export interface SnowflakeIdResponse {
-	ids: bigint[];
+  ids: bigint[];
 }
 
 function createBaseSnowflakeIdRequest(): SnowflakeIdRequest {
-	return { count: undefined };
+  return { count: undefined };
 }
 
 export const SnowflakeIdRequest: MessageFns<SnowflakeIdRequest> = {
-	encode(message: SnowflakeIdRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-		if (message.count !== undefined) {
-			writer.uint32(8).uint32(message.count);
-		}
-		return writer;
-	},
+  encode(message: SnowflakeIdRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.count !== undefined) {
+      writer.uint32(8).uint32(message.count);
+    }
+    return writer;
+  },
 
-	decode(input: BinaryReader | Uint8Array, length?: number): SnowflakeIdRequest {
-		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseSnowflakeIdRequest();
-		while (reader.pos < end) {
-			const tag = reader.uint32();
-			switch (tag >>> 3) {
-				case 1: {
-					if (tag !== 8) {
-						break;
-					}
+  decode(input: BinaryReader | Uint8Array, length?: number): SnowflakeIdRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSnowflakeIdRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
 
-					message.count = reader.uint32();
-					continue;
-				}
-			}
-			if ((tag & 7) === 4 || tag === 0) {
-				break;
-			}
-			reader.skip(tag & 7);
-		}
-		return message;
-	},
+          message.count = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
 
-	fromJSON(object: any): SnowflakeIdRequest {
-		return { count: isSet(object.count) ? gt.Number(object.count) : undefined };
-	},
+  fromJSON(object: any): SnowflakeIdRequest {
+    return { count: isSet(object.count) ? gt.Number(object.count) : undefined };
+  },
 
-	toJSON(message: SnowflakeIdRequest): unknown {
-		const obj: any = {};
-		if (message.count !== undefined) {
-			obj.count = Math.round(message.count);
-		}
-		return obj;
-	},
+  toJSON(message: SnowflakeIdRequest): unknown {
+    const obj: any = {};
+    if (message.count !== undefined) {
+      obj.count = Math.round(message.count);
+    }
+    return obj;
+  },
 
-	create<I extends Exact<DeepPartial<SnowflakeIdRequest>, I>>(base?: I): SnowflakeIdRequest {
-		return SnowflakeIdRequest.fromPartial(base ?? ({} as any));
-	},
-	fromPartial<I extends Exact<DeepPartial<SnowflakeIdRequest>, I>>(object: I): SnowflakeIdRequest {
-		const message = createBaseSnowflakeIdRequest();
-		message.count = object.count ?? undefined;
-		return message;
-	}
+  create<I extends Exact<DeepPartial<SnowflakeIdRequest>, I>>(base?: I): SnowflakeIdRequest {
+    return SnowflakeIdRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SnowflakeIdRequest>, I>>(object: I): SnowflakeIdRequest {
+    const message = createBaseSnowflakeIdRequest();
+    message.count = object.count ?? undefined;
+    return message;
+  },
 };
 
 function createBaseSnowflakeIdResponse(): SnowflakeIdResponse {
-	return { ids: [] };
+  return { ids: [] };
 }
 
 export const SnowflakeIdResponse: MessageFns<SnowflakeIdResponse> = {
-	encode(message: SnowflakeIdResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-		writer.uint32(10).fork();
-		for (const v of message.ids) {
-			if (BigInt.asUintN(64, v) !== v) {
-				throw new gt.Error('a value provided in array field ids of type uint64 is too large');
-			}
-			writer.uint64(v);
-		}
-		writer.join();
-		return writer;
-	},
+  encode(message: SnowflakeIdResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    writer.uint32(10).fork();
+    for (const v of message.ids) {
+      if (BigInt.asUintN(64, v) !== v) {
+        throw new gt.Error("a value provided in array field ids of type uint64 is too large");
+      }
+      writer.uint64(v);
+    }
+    writer.join();
+    return writer;
+  },
 
-	decode(input: BinaryReader | Uint8Array, length?: number): SnowflakeIdResponse {
-		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-		let end = length === undefined ? reader.len : reader.pos + length;
-		const message = createBaseSnowflakeIdResponse();
-		while (reader.pos < end) {
-			const tag = reader.uint32();
-			switch (tag >>> 3) {
-				case 1: {
-					if (tag === 8) {
-						message.ids.push(reader.uint64() as bigint);
+  decode(input: BinaryReader | Uint8Array, length?: number): SnowflakeIdResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSnowflakeIdResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag === 8) {
+            message.ids.push(reader.uint64() as bigint);
 
-						continue;
-					}
+            continue;
+          }
 
-					if (tag === 10) {
-						const end2 = reader.uint32() + reader.pos;
-						while (reader.pos < end2) {
-							message.ids.push(reader.uint64() as bigint);
-						}
+          if (tag === 10) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.ids.push(reader.uint64() as bigint);
+            }
 
-						continue;
-					}
+            continue;
+          }
 
-					break;
-				}
-			}
-			if ((tag & 7) === 4 || tag === 0) {
-				break;
-			}
-			reader.skip(tag & 7);
-		}
-		return message;
-	},
+          break;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
 
-	fromJSON(object: any): SnowflakeIdResponse {
-		return { ids: gt.Array.isArray(object?.ids) ? object.ids.map((e: any) => BigInt(e)) : [] };
-	},
+  fromJSON(object: any): SnowflakeIdResponse {
+    return { ids: gt.Array.isArray(object?.ids) ? object.ids.map((e: any) => BigInt(e)) : [] };
+  },
 
-	toJSON(message: SnowflakeIdResponse): unknown {
-		const obj: any = {};
-		if (message.ids?.length) {
-			obj.ids = message.ids.map((e) => e.toString());
-		}
-		return obj;
-	},
+  toJSON(message: SnowflakeIdResponse): unknown {
+    const obj: any = {};
+    if (message.ids?.length) {
+      obj.ids = message.ids.map((e) => e.toString());
+    }
+    return obj;
+  },
 
-	create<I extends Exact<DeepPartial<SnowflakeIdResponse>, I>>(base?: I): SnowflakeIdResponse {
-		return SnowflakeIdResponse.fromPartial(base ?? ({} as any));
-	},
-	fromPartial<I extends Exact<DeepPartial<SnowflakeIdResponse>, I>>(
-		object: I
-	): SnowflakeIdResponse {
-		const message = createBaseSnowflakeIdResponse();
-		message.ids = object.ids?.map((e) => e) || [];
-		return message;
-	}
+  create<I extends Exact<DeepPartial<SnowflakeIdResponse>, I>>(base?: I): SnowflakeIdResponse {
+    return SnowflakeIdResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SnowflakeIdResponse>, I>>(object: I): SnowflakeIdResponse {
+    const message = createBaseSnowflakeIdResponse();
+    message.ids = object.ids?.map((e) => e) || [];
+    return message;
+  },
 };
 
 export interface SnowflakeService {
-	SnowflakeID(request: SnowflakeIdRequest): Promise<SnowflakeIdResponse>;
+  SnowflakeID(request: SnowflakeIdRequest): Promise<SnowflakeIdResponse>;
 }
 
-export const SnowflakeServiceServiceName = 'snowflake.SnowflakeService';
+export const SnowflakeServiceServiceName = "snowflake.SnowflakeService";
 export class SnowflakeServiceClientImpl implements SnowflakeService {
-	private readonly rpc: Rpc;
-	private readonly service: string;
-	constructor(rpc: Rpc, opts?: { service?: string }) {
-		this.service = opts?.service || SnowflakeServiceServiceName;
-		this.rpc = rpc;
-		this.SnowflakeID = this.SnowflakeID.bind(this);
-	}
-	SnowflakeID(request: SnowflakeIdRequest): Promise<SnowflakeIdResponse> {
-		const data = SnowflakeIdRequest.encode(request).finish();
-		const promise = this.rpc.request(this.service, 'SnowflakeID', data);
-		return promise.then((data) => SnowflakeIdResponse.decode(new BinaryReader(data)));
-	}
+  private readonly rpc: Rpc;
+  private readonly service: string;
+  constructor(rpc: Rpc, opts?: { service?: string }) {
+    this.service = opts?.service || SnowflakeServiceServiceName;
+    this.rpc = rpc;
+    this.SnowflakeID = this.SnowflakeID.bind(this);
+  }
+  SnowflakeID(request: SnowflakeIdRequest): Promise<SnowflakeIdResponse> {
+    const data = SnowflakeIdRequest.encode(request).finish();
+    const promise = this.rpc.request(this.service, "SnowflakeID", data);
+    return promise.then((data) => SnowflakeIdResponse.decode(new BinaryReader(data)));
+  }
 }
 
 interface Rpc {
-	request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
 declare const self: any | undefined;
 declare const window: any | undefined;
 declare const global: any | undefined;
 const gt: any = (() => {
-	if (typeof globalThis !== 'undefined') {
-		return globalThis;
-	}
-	if (typeof self !== 'undefined') {
-		return self;
-	}
-	if (typeof window !== 'undefined') {
-		return window;
-	}
-	if (typeof global !== 'undefined') {
-		return global;
-	}
-	throw 'Unable to locate global object';
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
+  throw "Unable to locate global object";
 })();
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | bigint | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-	? T
-	: T extends globalThis.Array<infer U>
-		? globalThis.Array<DeepPartial<U>>
-		: T extends ReadonlyArray<infer U>
-			? ReadonlyArray<DeepPartial<U>>
-			: T extends { $case: string; value: unknown }
-				? { $case: T['$case']; value?: DeepPartial<T['value']> }
-				: T extends {}
-					? { [K in keyof T]?: DeepPartial<T[K]> }
-					: Partial<T>;
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends { $case: string; value: unknown } ? { $case: T["$case"]; value?: DeepPartial<T["value"]> }
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin
-	? P
-	: P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
-	return value !== null && value !== undefined;
+  return value !== null && value !== undefined;
 }
 
 export interface MessageFns<T> {
-	encode(message: T, writer?: BinaryWriter): BinaryWriter;
-	decode(input: BinaryReader | Uint8Array, length?: number): T;
-	fromJSON(object: any): T;
-	toJSON(message: T): unknown;
-	create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-	fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+  encode(message: T, writer?: BinaryWriter): BinaryWriter;
+  decode(input: BinaryReader | Uint8Array, length?: number): T;
+  fromJSON(object: any): T;
+  toJSON(message: T): unknown;
+  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
+  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

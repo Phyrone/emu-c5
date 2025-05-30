@@ -33,7 +33,7 @@ async fn main() {
         .send_compressed(CompressionEncoding::Zstd)
         .accept_compressed(CompressionEncoding::Zstd);
 
-    info!("Listening on {}...", params.listen);
+    info!("Listening on grpc://{}", params.listen);
     tonic::transport::Server::builder()
         .accept_http1(true)
         .tcp_nodelay(true)
