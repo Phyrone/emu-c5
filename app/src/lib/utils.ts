@@ -48,3 +48,16 @@ export function parseBigBase36(value: string): bigint {
 
 	return isNegative ? -result : result;
 }
+
+export function lazy<T>(fn: () => Promise<T> | T): () => Promise<T> {
+	let called = false;
+	let result: Promise<T> | T;
+
+	return async () => {
+		if (!called) {
+			called = true;
+			result = fn();
+		}
+		return result;
+	};
+}

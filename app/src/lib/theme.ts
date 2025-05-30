@@ -11,7 +11,7 @@ const THEME_DATA_ATTRIBUTE = 'data-theme';
 export const DEFAULT_THEME = 'default';
 export const available_themes = [DEFAULT_THEME, ...Object.keys(themes)].toSorted();
 
-export const theme_store = cookie_store<string>(THEME_COOKIE_NAME, 'default',{
+export const theme_store = cookie_store<string>(THEME_COOKIE_NAME, 'default', {
 	codec: 'plain'
 });
 
