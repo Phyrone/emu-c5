@@ -1,5 +1,6 @@
 import {invalidate, invalidateAll} from '$app/navigation';
-import {building} from "$app/environment";
+import {building} from '$app/environment';
+import ms from "ms";
 
 export function throwifyBundled<T>(bundle: { data: T; error: unknown }): T {
     return throwify(bundle.data, bundle.error);
@@ -57,18 +58,36 @@ class BuildtimeAccessProhibitedError extends Error {
     }
 }
 
-export function lazy<T>(fn: () => Promise<T> | T, prohibit_prerender: boolean = true): () => Promise<T> {
+export function sleep(delay: number | ms.StringValue): Promise<void> {
+
+    // noinspection SuspiciousTypeOfGuard
+    const milliseconds = typeof delay === 'string' ? ms(delay as ms.StringValue) : delay;
+
+    if (milliseconds < 0) {
+        return Promise.resolve()
+    }
+    return new Promise((resolve) => {
+        setTimeout(resolve, milliseconds);
+    });
+
+}
+
+export function lazy<T>(
+    fn: () => Promise<T> | T,
+    prohibit_prerender: boolean = true
+): () => Promise<T> {
     let called = false;
     let result: Promise<T> | T;
 
-
-    return (prohibit_prerender && building) ? () => {
-        throw new BuildtimeAccessProhibitedError()
-    } : async () => {
-        if (!called) {
-            called = true;
-            result = fn();
+    return prohibit_prerender && building
+        ? () => {
+            throw new BuildtimeAccessProhibitedError();
         }
-        return result;
-    };
+        : async () => {
+            if (!called) {
+                called = true;
+                result = fn();
+            }
+            return result;
+        };
 }

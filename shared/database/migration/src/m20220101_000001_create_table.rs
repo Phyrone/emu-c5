@@ -11,6 +11,45 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
+                    .table(User::Table)
+                    .col(
+                        ColumnDef::new(User::Id)
+                            .big_integer()
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(User::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(User::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(User::DeletedAt).timestamp())
+                    .col(
+                        ColumnDef::new(User::Username)
+                            .string()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(ColumnDef::new(User::Email).string().not_null().unique_key())
+                    .col(ColumnDef::new(User::Password).string().null())
+                    .col(
+                        ColumnDef::new(User::SessionSecret)
+                            .binary()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(User::SessionGeneration)
+                            .small_integer()
+                            .not_null()
+                            .default(0)
+                            .comment("Session generation of session token, on overflow it will be reset to 0 this is used to invalidate cached previous session tokens"),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_table(
+                Table::create()
                     .table(UserContent::Table)
                     .col(
                         ColumnDef::new(UserContent::Id)
@@ -125,7 +164,8 @@ impl MigrationTrait for Migration {
                     .values(ChannelTypeValues::iter())
                     .as_enum(ChannelType::Table)
                     .to_owned(),
-            ).await?;
+            )
+            .await?;
 
         manager
             .create_table(
@@ -144,8 +184,11 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Channel::GuildId).big_integer().null())
                     .col(ColumnDef::new(Channel::ParentId).big_integer().null())
                     .col(ColumnDef::new(Channel::Name).string().not_null())
-                    .col(ColumnDef::new(Channel::Type).custom(ChannelType::Table)
-                        .not_null())
+                    .col(
+                        ColumnDef::new(Channel::Type)
+                            .custom(ChannelType::Table)
+                            .not_null(),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -204,8 +247,9 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-                    .to_owned()
-            ).await?;
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
@@ -319,6 +363,20 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
+enum User {
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    Username,
+    Email,
+    Password,
+    SessionSecret,
+    SessionGeneration,
+}
+
+#[derive(DeriveIden)]
 enum Profile {
     Table,
     Id,
@@ -332,11 +390,9 @@ enum Profile {
 }
 
 #[derive(DeriveIden)]
-enum BlobStore{
+enum BlobStore {
     Table,
     Id,
-    
-    
 }
 
 #[derive(DeriveIden)]
@@ -365,11 +421,11 @@ enum Guild {
 }
 
 #[derive(DeriveIden)]
-enum ChannelType{
+enum ChannelType {
     Table,
 }
 
-#[derive(EnumIter,Iden)]
+#[derive(EnumIter, Iden)]
 enum ChannelTypeValues {
     Direct,
     Dummy,
@@ -394,7 +450,7 @@ enum Channel {
 }
 
 #[derive(DeriveIden)]
-enum Message{
+enum Message {
     Table,
     Id,
     CreatedAt,
@@ -405,7 +461,6 @@ enum Message{
     ReplyToId,
     Payload,
     Metadata,
-
 }
 
 #[derive(DeriveIden)]

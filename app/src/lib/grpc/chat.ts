@@ -5,344 +5,357 @@
 // source: chat.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { Selector } from "./common";
+import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Selector } from './common';
 
-export const protobufPackage = "chat";
+export const protobufPackage = 'chat';
 
 export interface SendMessageRequest {
-  channel: Selector | undefined;
+	channel: Selector | undefined;
 }
 
-export interface SendMessageResponse {
-}
+export interface SendMessageResponse {}
 
 export interface GetMessagesRequest {
-  channel: Selector | undefined;
+	channel: Selector | undefined;
 }
 
-export interface GetMessagesResponse {
-}
+export interface GetMessagesResponse {}
 
-export interface ChatMessageEvent {
-}
+export interface ChatMessageEvent {}
 
 function createBaseSendMessageRequest(): SendMessageRequest {
-  return { channel: undefined };
+	return { channel: undefined };
 }
 
 export const SendMessageRequest: MessageFns<SendMessageRequest> = {
-  encode(message: SendMessageRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.channel !== undefined) {
-      Selector.encode(message.channel, writer.uint32(10).fork()).join();
-    }
-    return writer;
-  },
+	encode(message: SendMessageRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		if (message.channel !== undefined) {
+			Selector.encode(message.channel, writer.uint32(10).fork()).join();
+		}
+		return writer;
+	},
 
-  decode(input: BinaryReader | Uint8Array, length?: number): SendMessageRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSendMessageRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
+	decode(input: BinaryReader | Uint8Array, length?: number): SendMessageRequest {
+		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+		let end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseSendMessageRequest();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+				case 1: {
+					if (tag !== 10) {
+						break;
+					}
 
-          message.channel = Selector.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+					message.channel = Selector.decode(reader, reader.uint32());
+					continue;
+				}
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skip(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(object: any): SendMessageRequest {
-    return { channel: isSet(object.channel) ? Selector.fromJSON(object.channel) : undefined };
-  },
+	fromJSON(object: any): SendMessageRequest {
+		return { channel: isSet(object.channel) ? Selector.fromJSON(object.channel) : undefined };
+	},
 
-  toJSON(message: SendMessageRequest): unknown {
-    const obj: any = {};
-    if (message.channel !== undefined) {
-      obj.channel = Selector.toJSON(message.channel);
-    }
-    return obj;
-  },
+	toJSON(message: SendMessageRequest): unknown {
+		const obj: any = {};
+		if (message.channel !== undefined) {
+			obj.channel = Selector.toJSON(message.channel);
+		}
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<SendMessageRequest>, I>>(base?: I): SendMessageRequest {
-    return SendMessageRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SendMessageRequest>, I>>(object: I): SendMessageRequest {
-    const message = createBaseSendMessageRequest();
-    message.channel = (object.channel !== undefined && object.channel !== null)
-      ? Selector.fromPartial(object.channel)
-      : undefined;
-    return message;
-  },
+	create<I extends Exact<DeepPartial<SendMessageRequest>, I>>(base?: I): SendMessageRequest {
+		return SendMessageRequest.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<SendMessageRequest>, I>>(object: I): SendMessageRequest {
+		const message = createBaseSendMessageRequest();
+		message.channel =
+			object.channel !== undefined && object.channel !== null
+				? Selector.fromPartial(object.channel)
+				: undefined;
+		return message;
+	}
 };
 
 function createBaseSendMessageResponse(): SendMessageResponse {
-  return {};
+	return {};
 }
 
 export const SendMessageResponse: MessageFns<SendMessageResponse> = {
-  encode(_: SendMessageResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
+	encode(_: SendMessageResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		return writer;
+	},
 
-  decode(input: BinaryReader | Uint8Array, length?: number): SendMessageResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseSendMessageResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+	decode(input: BinaryReader | Uint8Array, length?: number): SendMessageResponse {
+		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+		let end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseSendMessageResponse();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skip(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(_: any): SendMessageResponse {
-    return {};
-  },
+	fromJSON(_: any): SendMessageResponse {
+		return {};
+	},
 
-  toJSON(_: SendMessageResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
+	toJSON(_: SendMessageResponse): unknown {
+		const obj: any = {};
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<SendMessageResponse>, I>>(base?: I): SendMessageResponse {
-    return SendMessageResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SendMessageResponse>, I>>(_: I): SendMessageResponse {
-    const message = createBaseSendMessageResponse();
-    return message;
-  },
+	create<I extends Exact<DeepPartial<SendMessageResponse>, I>>(base?: I): SendMessageResponse {
+		return SendMessageResponse.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<SendMessageResponse>, I>>(_: I): SendMessageResponse {
+		const message = createBaseSendMessageResponse();
+		return message;
+	}
 };
 
 function createBaseGetMessagesRequest(): GetMessagesRequest {
-  return { channel: undefined };
+	return { channel: undefined };
 }
 
 export const GetMessagesRequest: MessageFns<GetMessagesRequest> = {
-  encode(message: GetMessagesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.channel !== undefined) {
-      Selector.encode(message.channel, writer.uint32(10).fork()).join();
-    }
-    return writer;
-  },
+	encode(message: GetMessagesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		if (message.channel !== undefined) {
+			Selector.encode(message.channel, writer.uint32(10).fork()).join();
+		}
+		return writer;
+	},
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetMessagesRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetMessagesRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
+	decode(input: BinaryReader | Uint8Array, length?: number): GetMessagesRequest {
+		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+		let end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseGetMessagesRequest();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+				case 1: {
+					if (tag !== 10) {
+						break;
+					}
 
-          message.channel = Selector.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+					message.channel = Selector.decode(reader, reader.uint32());
+					continue;
+				}
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skip(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(object: any): GetMessagesRequest {
-    return { channel: isSet(object.channel) ? Selector.fromJSON(object.channel) : undefined };
-  },
+	fromJSON(object: any): GetMessagesRequest {
+		return { channel: isSet(object.channel) ? Selector.fromJSON(object.channel) : undefined };
+	},
 
-  toJSON(message: GetMessagesRequest): unknown {
-    const obj: any = {};
-    if (message.channel !== undefined) {
-      obj.channel = Selector.toJSON(message.channel);
-    }
-    return obj;
-  },
+	toJSON(message: GetMessagesRequest): unknown {
+		const obj: any = {};
+		if (message.channel !== undefined) {
+			obj.channel = Selector.toJSON(message.channel);
+		}
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<GetMessagesRequest>, I>>(base?: I): GetMessagesRequest {
-    return GetMessagesRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<GetMessagesRequest>, I>>(object: I): GetMessagesRequest {
-    const message = createBaseGetMessagesRequest();
-    message.channel = (object.channel !== undefined && object.channel !== null)
-      ? Selector.fromPartial(object.channel)
-      : undefined;
-    return message;
-  },
+	create<I extends Exact<DeepPartial<GetMessagesRequest>, I>>(base?: I): GetMessagesRequest {
+		return GetMessagesRequest.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<GetMessagesRequest>, I>>(object: I): GetMessagesRequest {
+		const message = createBaseGetMessagesRequest();
+		message.channel =
+			object.channel !== undefined && object.channel !== null
+				? Selector.fromPartial(object.channel)
+				: undefined;
+		return message;
+	}
 };
 
 function createBaseGetMessagesResponse(): GetMessagesResponse {
-  return {};
+	return {};
 }
 
 export const GetMessagesResponse: MessageFns<GetMessagesResponse> = {
-  encode(_: GetMessagesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
+	encode(_: GetMessagesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		return writer;
+	},
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetMessagesResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetMessagesResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+	decode(input: BinaryReader | Uint8Array, length?: number): GetMessagesResponse {
+		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+		let end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseGetMessagesResponse();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skip(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(_: any): GetMessagesResponse {
-    return {};
-  },
+	fromJSON(_: any): GetMessagesResponse {
+		return {};
+	},
 
-  toJSON(_: GetMessagesResponse): unknown {
-    const obj: any = {};
-    return obj;
-  },
+	toJSON(_: GetMessagesResponse): unknown {
+		const obj: any = {};
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<GetMessagesResponse>, I>>(base?: I): GetMessagesResponse {
-    return GetMessagesResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<GetMessagesResponse>, I>>(_: I): GetMessagesResponse {
-    const message = createBaseGetMessagesResponse();
-    return message;
-  },
+	create<I extends Exact<DeepPartial<GetMessagesResponse>, I>>(base?: I): GetMessagesResponse {
+		return GetMessagesResponse.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<GetMessagesResponse>, I>>(_: I): GetMessagesResponse {
+		const message = createBaseGetMessagesResponse();
+		return message;
+	}
 };
 
 function createBaseChatMessageEvent(): ChatMessageEvent {
-  return {};
+	return {};
 }
 
 export const ChatMessageEvent: MessageFns<ChatMessageEvent> = {
-  encode(_: ChatMessageEvent, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
+	encode(_: ChatMessageEvent, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+		return writer;
+	},
 
-  decode(input: BinaryReader | Uint8Array, length?: number): ChatMessageEvent {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseChatMessageEvent();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
+	decode(input: BinaryReader | Uint8Array, length?: number): ChatMessageEvent {
+		const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+		let end = length === undefined ? reader.len : reader.pos + length;
+		const message = createBaseChatMessageEvent();
+		while (reader.pos < end) {
+			const tag = reader.uint32();
+			switch (tag >>> 3) {
+			}
+			if ((tag & 7) === 4 || tag === 0) {
+				break;
+			}
+			reader.skip(tag & 7);
+		}
+		return message;
+	},
 
-  fromJSON(_: any): ChatMessageEvent {
-    return {};
-  },
+	fromJSON(_: any): ChatMessageEvent {
+		return {};
+	},
 
-  toJSON(_: ChatMessageEvent): unknown {
-    const obj: any = {};
-    return obj;
-  },
+	toJSON(_: ChatMessageEvent): unknown {
+		const obj: any = {};
+		return obj;
+	},
 
-  create<I extends Exact<DeepPartial<ChatMessageEvent>, I>>(base?: I): ChatMessageEvent {
-    return ChatMessageEvent.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<ChatMessageEvent>, I>>(_: I): ChatMessageEvent {
-    const message = createBaseChatMessageEvent();
-    return message;
-  },
+	create<I extends Exact<DeepPartial<ChatMessageEvent>, I>>(base?: I): ChatMessageEvent {
+		return ChatMessageEvent.fromPartial(base ?? ({} as any));
+	},
+	fromPartial<I extends Exact<DeepPartial<ChatMessageEvent>, I>>(_: I): ChatMessageEvent {
+		const message = createBaseChatMessageEvent();
+		return message;
+	}
 };
 
 export interface ChatService {
-  SendMessage(request: SendMessageRequest): Promise<SendMessageResponse>;
-  GetMessages(request: GetMessagesRequest): Promise<GetMessagesResponse>;
-  SubscribeToMessages(request: Selector): Observable<ChatMessageEvent>;
+	SendMessage(request: SendMessageRequest): Promise<SendMessageResponse>;
+	GetMessages(request: GetMessagesRequest): Promise<GetMessagesResponse>;
+	SubscribeToMessages(request: Selector): Observable<ChatMessageEvent>;
 }
 
-export const ChatServiceServiceName = "chat.ChatService";
+export const ChatServiceServiceName = 'chat.ChatService';
 export class ChatServiceClientImpl implements ChatService {
-  private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || ChatServiceServiceName;
-    this.rpc = rpc;
-    this.SendMessage = this.SendMessage.bind(this);
-    this.GetMessages = this.GetMessages.bind(this);
-    this.SubscribeToMessages = this.SubscribeToMessages.bind(this);
-  }
-  SendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
-    const data = SendMessageRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "SendMessage", data);
-    return promise.then((data) => SendMessageResponse.decode(new BinaryReader(data)));
-  }
+	private readonly rpc: Rpc;
+	private readonly service: string;
+	constructor(rpc: Rpc, opts?: { service?: string }) {
+		this.service = opts?.service || ChatServiceServiceName;
+		this.rpc = rpc;
+		this.SendMessage = this.SendMessage.bind(this);
+		this.GetMessages = this.GetMessages.bind(this);
+		this.SubscribeToMessages = this.SubscribeToMessages.bind(this);
+	}
+	SendMessage(request: SendMessageRequest): Promise<SendMessageResponse> {
+		const data = SendMessageRequest.encode(request).finish();
+		const promise = this.rpc.request(this.service, 'SendMessage', data);
+		return promise.then((data) => SendMessageResponse.decode(new BinaryReader(data)));
+	}
 
-  GetMessages(request: GetMessagesRequest): Promise<GetMessagesResponse> {
-    const data = GetMessagesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetMessages", data);
-    return promise.then((data) => GetMessagesResponse.decode(new BinaryReader(data)));
-  }
+	GetMessages(request: GetMessagesRequest): Promise<GetMessagesResponse> {
+		const data = GetMessagesRequest.encode(request).finish();
+		const promise = this.rpc.request(this.service, 'GetMessages', data);
+		return promise.then((data) => GetMessagesResponse.decode(new BinaryReader(data)));
+	}
 
-  SubscribeToMessages(request: Selector): Observable<ChatMessageEvent> {
-    const data = Selector.encode(request).finish();
-    const result = this.rpc.serverStreamingRequest(this.service, "SubscribeToMessages", data);
-    return result.pipe(map((data) => ChatMessageEvent.decode(new BinaryReader(data))));
-  }
+	SubscribeToMessages(request: Selector): Observable<ChatMessageEvent> {
+		const data = Selector.encode(request).finish();
+		const result = this.rpc.serverStreamingRequest(this.service, 'SubscribeToMessages', data);
+		return result.pipe(map((data) => ChatMessageEvent.decode(new BinaryReader(data))));
+	}
 }
 
 interface Rpc {
-  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
-  clientStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Promise<Uint8Array>;
-  serverStreamingRequest(service: string, method: string, data: Uint8Array): Observable<Uint8Array>;
-  bidirectionalStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Observable<Uint8Array>;
+	request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
+	clientStreamingRequest(
+		service: string,
+		method: string,
+		data: Observable<Uint8Array>
+	): Promise<Uint8Array>;
+	serverStreamingRequest(service: string, method: string, data: Uint8Array): Observable<Uint8Array>;
+	bidirectionalStreamingRequest(
+		service: string,
+		method: string,
+		data: Observable<Uint8Array>
+	): Observable<Uint8Array>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | bigint | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends { $case: string; value: unknown } ? { $case: T["$case"]; value?: DeepPartial<T["value"]> }
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+	? T
+	: T extends globalThis.Array<infer U>
+		? globalThis.Array<DeepPartial<U>>
+		: T extends ReadonlyArray<infer U>
+			? ReadonlyArray<DeepPartial<U>>
+			: T extends { $case: string; value: unknown }
+				? { $case: T['$case']; value?: DeepPartial<T['value']> }
+				: T extends {}
+					? { [K in keyof T]?: DeepPartial<T[K]> }
+					: Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+export type Exact<P, I extends P> = P extends Builtin
+	? P
+	: P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
-  return value !== null && value !== undefined;
+	return value !== null && value !== undefined;
 }
 
 export interface MessageFns<T> {
-  encode(message: T, writer?: BinaryWriter): BinaryWriter;
-  decode(input: BinaryReader | Uint8Array, length?: number): T;
-  fromJSON(object: any): T;
-  toJSON(message: T): unknown;
-  create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
-  fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
+	encode(message: T, writer?: BinaryWriter): BinaryWriter;
+	decode(input: BinaryReader | Uint8Array, length?: number): T;
+	fromJSON(object: any): T;
+	toJSON(message: T): unknown;
+	create<I extends Exact<DeepPartial<T>, I>>(base?: I): T;
+	fromPartial<I extends Exact<DeepPartial<T>, I>>(object: I): T;
 }

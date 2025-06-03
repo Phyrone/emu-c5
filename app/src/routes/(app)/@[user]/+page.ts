@@ -1,6 +1,5 @@
-import type {PageLoad} from './$types';
+import type { PageLoad } from './$types';
 
-export let load: PageLoad = async ({params: {user}}) => {
-
-    return {}
-}
+export let load: PageLoad = async ({ params: { user } }) => {
+	return {};
+};

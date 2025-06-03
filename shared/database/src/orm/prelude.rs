@@ -6,4 +6,5 @@ pub use super::guild::Entity as Guild;
 pub use super::message::Entity as Message;
 pub use super::post::Entity as Post;
 pub use super::profile::Entity as Profile;
+pub use super::user::Entity as User;
 pub use super::user_content::Entity as UserContent;

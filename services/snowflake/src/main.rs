@@ -1,11 +1,13 @@
 use crate::startup::StartupParams;
 use clap::Parser;
-use emu_shared_grpc::snowflake::snowflake_service_server::{SnowflakeService, SnowflakeServiceServer};
+use emu_shared_grpc::snowflake::snowflake_service_server::{
+    SnowflakeService, SnowflakeServiceServer,
+};
 use emu_shared_grpc::snowflake::{SnowflakeIdRequest, SnowflakeIdResponse};
 use hexafreeze::HexaFreezeError;
 use sentry::{ClientOptions, release_name};
-use tonic::{Request, Response, Status, async_trait};
 use tonic::codegen::CompressionEncoding;
+use tonic::{Request, Response, Status, async_trait};
 use tracing::{info, instrument};
 
 mod startup;

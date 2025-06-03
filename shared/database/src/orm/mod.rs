@@ -9,6 +9,7 @@ pub mod message;
 pub mod post;
 pub mod profile;
 pub mod sea_orm_active_enums;
+pub mod user;
 pub mod user_content;
 
 seaography::register_entity_modules!([
@@ -18,6 +19,7 @@ seaography::register_entity_modules!([
     message,
     post,
     profile,
+    user,
     user_content,
 ]);
 seaography::register_active_enums!([sea_orm_active_enums::ChannelType,]);

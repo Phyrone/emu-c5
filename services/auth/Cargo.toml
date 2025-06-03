@@ -11,3 +11,4 @@ readme.workspace = true
 [dependencies]
 tokio.workspace = true
 emu-shared-grpc.workspace = true
+argon2 = { version = "0.5.3", features = ["std", "simple"] }

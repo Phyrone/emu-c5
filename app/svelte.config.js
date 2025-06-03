@@ -44,6 +44,9 @@ const config = {
 		inlineStyleThreshold: 512,
 		paths: {
 			relative: false
+		},
+		serviceWorker: {
+			register: false
 		}
 	}
 };

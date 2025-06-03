@@ -1,8 +1,8 @@
-use std::ops::Deref;
 use futures_lite::future::block_on;
 use postgresql_embedded::{PostgreSQL, Settings};
 use sqlx::pool::PoolOptions;
 use sqlx::{ConnectOptions, Postgres};
+use std::ops::Deref;
 use std::path::Path;
 use std::time::Instant;
 
@@ -21,7 +21,6 @@ impl TempPostgres {
     }
 
     pub async fn new() -> Self {
-
         let temp_dir = tempfile::tempdir().unwrap();
 
         println!("Temp dir: {:?}", temp_dir.path());
