@@ -1,26 +1,42 @@
 <script lang="ts">
-	import { SearchIcon } from '@lucide/svelte';
+    import {SearchIcon, UserIcon, MenuIcon} from '@lucide/svelte';
 
-	import { MediaQuery } from 'svelte/reactivity';
-	import type {PageId} from "$lib/page";
+    type Props = {
+        sidebar_open: boolean;
+    };
 
-	type Props = {
-		page_id?: PageId;
-	};
-	let {page_id }: Props = $props();
+    let {sidebar_open = $bindable()}: Props = $props();
+
+    function toggleSidebar(event: Event) {
+        event.preventDefault();
+        sidebar_open = !sidebar_open;
+    }
 </script>
 
-<nav class="navbar bg-base-100 sticky top-0 z-30 hidden shadow sm:flex">
-	<div class="navbar-start"></div>
-	<div class="navbar-center">
-		<label class="floating-label">
-			<label class="input w-lg transition-all lg:w-2xl">
-				<SearchIcon size="16" class="opacity-50" />
-				<input type="text" class="grow" placeholder="Search..." />
-			</label>
-			<span>Search</span>
-		</label>
 
-	</div>
-	<div class="navbar-end"></div>
+<nav class="hidden sm:fixed navbar bg-base-100 top-0 z-30 shadow sm:flex">
+    <div class="navbar-start gap-3">
+        <button class={['btn btn-ghost btn-circle', sidebar_open && 'btn-active']} onclick={toggleSidebar}>
+            <MenuIcon/>
+        </button>
+        <a href="#content" class="text-primary-content btn-link sr-only focus:not-sr-only">Skip to content</a>
+        <a href="/" class=" btn btn-ghost btn-lg uppercase">emu</a>
+    </div>
+    <div class="navbar-center">
+        <label class="floating-label">
+            <label class="input w-lg transition-all lg:w-2xl ">
+                <SearchIcon size="16" class="opacity-50"/>
+                <input type="text" class="grow" placeholder="Search..."/>
+            </label>
+            <span>Search</span>
+        </label>
+
+    </div>
+    <div class="navbar-end">
+
+        <button class="btn btn-ghost btn-circle btn-lg">
+            <UserIcon/>
+        </button>
+    </div>
 </nav>
+<div class="h-16 hidden sm:block"></div>

@@ -6,3 +6,10 @@
 	themes: all;
 	logs: false;
 }
+
+.callout-disabled {
+	-webkit-touch-callout: none;
+}
+.callout-enabled{
+	-webkit-touch-callout: default;
+}

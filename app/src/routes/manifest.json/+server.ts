@@ -75,7 +75,7 @@ const PwaManifest = z.object({
 
 type PwaManifest = z.infer<typeof PwaManifest>;
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async () => {
 	return json({
 		orientation: 'natural',
 		display: 'standalone',
@@ -83,7 +83,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		lang: 'de-DE',
 		name: 'EMU',
 		short_name: 'EMU',
-		theme_color: '#8936FF',
+		theme_color: '#000000',
 		background_color: '#2EC6FE',
 		start_url: '/',
 		icons: [
