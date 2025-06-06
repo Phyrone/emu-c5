@@ -3,6 +3,8 @@
 pub use super::channel::Entity as Channel;
 pub use super::comment::Entity as Comment;
 pub use super::guild::Entity as Guild;
+pub use super::guild_member::Entity as GuildMember;
+pub use super::guild_role::Entity as GuildRole;
 pub use super::message::Entity as Message;
 pub use super::post::Entity as Post;
 pub use super::profile::Entity as Profile;

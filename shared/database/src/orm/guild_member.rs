@@ -8,52 +8,48 @@ pub struct Entity;
 
 impl EntityName for Entity {
     fn table_name(&self) -> &str {
-        "guild"
+        "guild_member"
     }
 }
 
 #[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel, Eq, Serialize, Deserialize)]
 pub struct Model {
-    pub id: i64,
-    pub origin: Option<Json>,
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
-    pub deleted_at: Option<DateTime>,
-    pub owner_id: i64,
-    pub name: String,
+    pub guild_id: i64,
+    pub member_id: i64,
+    pub joined_at: DateTime,
+    pub role_id: Option<i64>,
+    pub privileges: Json,
+    pub profile_overwrites: Option<Json>,
     pub configuration: Json,
-    pub description: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
 pub enum Column {
-    Id,
-    Origin,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    OwnerId,
-    Name,
+    GuildId,
+    MemberId,
+    JoinedAt,
+    RoleId,
+    Privileges,
+    ProfileOverwrites,
     Configuration,
-    Description,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
 pub enum PrimaryKey {
-    Id,
+    GuildId,
+    MemberId,
 }
 
 impl PrimaryKeyTrait for PrimaryKey {
-    type ValueType = i64;
+    type ValueType = (i64, i64);
     fn auto_increment() -> bool {
-        true
+        false
     }
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    Channel,
-    GuildMember,
+    Guild,
     GuildRole,
     Profile,
 }
@@ -62,15 +58,13 @@ impl ColumnTrait for Column {
     type EntityName = Entity;
     fn def(&self) -> ColumnDef {
         match self {
-            Self::Id => ColumnType::BigInteger.def(),
-            Self::Origin => ColumnType::JsonBinary.def().null(),
-            Self::CreatedAt => ColumnType::DateTime.def(),
-            Self::UpdatedAt => ColumnType::DateTime.def(),
-            Self::DeletedAt => ColumnType::DateTime.def().null(),
-            Self::OwnerId => ColumnType::BigInteger.def(),
-            Self::Name => ColumnType::String(StringLen::None).def(),
+            Self::GuildId => ColumnType::BigInteger.def(),
+            Self::MemberId => ColumnType::BigInteger.def(),
+            Self::JoinedAt => ColumnType::DateTime.def(),
+            Self::RoleId => ColumnType::BigInteger.def().null(),
+            Self::Privileges => ColumnType::JsonBinary.def(),
+            Self::ProfileOverwrites => ColumnType::JsonBinary.def().null(),
             Self::Configuration => ColumnType::JsonBinary.def(),
-            Self::Description => ColumnType::JsonBinary.def(),
         }
     }
 }
@@ -78,26 +72,25 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::Channel => Entity::has_many(super::channel::Entity).into(),
-            Self::GuildMember => Entity::has_many(super::guild_member::Entity).into(),
-            Self::GuildRole => Entity::has_many(super::guild_role::Entity).into(),
+            Self::Guild => Entity::belongs_to(super::guild::Entity)
+                .from(Column::GuildId)
+                .to(super::guild::Column::Id)
+                .into(),
+            Self::GuildRole => Entity::belongs_to(super::guild_role::Entity)
+                .from(Column::RoleId)
+                .to(super::guild_role::Column::Id)
+                .into(),
             Self::Profile => Entity::belongs_to(super::profile::Entity)
-                .from(Column::OwnerId)
+                .from(Column::MemberId)
                 .to(super::profile::Column::Id)
                 .into(),
         }
     }
 }
 
-impl Related<super::channel::Entity> for Entity {
+impl Related<super::guild::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Channel.def()
-    }
-}
-
-impl Related<super::guild_member::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::GuildMember.def()
+        Relation::Guild.def()
     }
 }
 
@@ -117,10 +110,8 @@ impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
 pub enum RelatedEntity {
-    #[sea_orm(entity = "super::channel::Entity")]
-    Channel,
-    #[sea_orm(entity = "super::guild_member::Entity")]
-    GuildMember,
+    #[sea_orm(entity = "super::guild::Entity")]
+    Guild,
     #[sea_orm(entity = "super::guild_role::Entity")]
     GuildRole,
     #[sea_orm(entity = "super::profile::Entity")]

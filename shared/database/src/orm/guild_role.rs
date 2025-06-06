@@ -8,7 +8,7 @@ pub struct Entity;
 
 impl EntityName for Entity {
     fn table_name(&self) -> &str {
-        "guild"
+        "guild_role"
     }
 }
 
@@ -19,10 +19,13 @@ pub struct Model {
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub deleted_at: Option<DateTime>,
-    pub owner_id: i64,
+    pub guild_id: i64,
     pub name: String,
+    pub color: Option<String>,
+    pub privileges: Json,
     pub configuration: Json,
-    pub description: Json,
+    pub is_default: bool,
+    pub position: i16,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -32,10 +35,13 @@ pub enum Column {
     CreatedAt,
     UpdatedAt,
     DeletedAt,
-    OwnerId,
+    GuildId,
     Name,
+    Color,
+    Privileges,
     Configuration,
-    Description,
+    IsDefault,
+    Position,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -52,10 +58,8 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
-    Channel,
+    Guild,
     GuildMember,
-    GuildRole,
-    Profile,
 }
 
 impl ColumnTrait for Column {
@@ -67,10 +71,13 @@ impl ColumnTrait for Column {
             Self::CreatedAt => ColumnType::DateTime.def(),
             Self::UpdatedAt => ColumnType::DateTime.def(),
             Self::DeletedAt => ColumnType::DateTime.def().null(),
-            Self::OwnerId => ColumnType::BigInteger.def(),
+            Self::GuildId => ColumnType::BigInteger.def(),
             Self::Name => ColumnType::String(StringLen::None).def(),
+            Self::Color => ColumnType::String(StringLen::None).def().null(),
+            Self::Privileges => ColumnType::JsonBinary.def(),
             Self::Configuration => ColumnType::JsonBinary.def(),
-            Self::Description => ColumnType::JsonBinary.def(),
+            Self::IsDefault => ColumnType::Boolean.def(),
+            Self::Position => ColumnType::SmallInteger.def(),
         }
     }
 }
@@ -78,20 +85,18 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::Channel => Entity::has_many(super::channel::Entity).into(),
-            Self::GuildMember => Entity::has_many(super::guild_member::Entity).into(),
-            Self::GuildRole => Entity::has_many(super::guild_role::Entity).into(),
-            Self::Profile => Entity::belongs_to(super::profile::Entity)
-                .from(Column::OwnerId)
-                .to(super::profile::Column::Id)
+            Self::Guild => Entity::belongs_to(super::guild::Entity)
+                .from(Column::GuildId)
+                .to(super::guild::Column::Id)
                 .into(),
+            Self::GuildMember => Entity::has_many(super::guild_member::Entity).into(),
         }
     }
 }
 
-impl Related<super::channel::Entity> for Entity {
+impl Related<super::guild::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Channel.def()
+        Relation::Guild.def()
     }
 }
 
@@ -101,28 +106,12 @@ impl Related<super::guild_member::Entity> for Entity {
     }
 }
 
-impl Related<super::guild_role::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::GuildRole.def()
-    }
-}
-
-impl Related<super::profile::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Profile.def()
-    }
-}
-
 impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
 pub enum RelatedEntity {
-    #[sea_orm(entity = "super::channel::Entity")]
-    Channel,
+    #[sea_orm(entity = "super::guild::Entity")]
+    Guild,
     #[sea_orm(entity = "super::guild_member::Entity")]
     GuildMember,
-    #[sea_orm(entity = "super::guild_role::Entity")]
-    GuildRole,
-    #[sea_orm(entity = "super::profile::Entity")]
-    Profile,
 }

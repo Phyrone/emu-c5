@@ -150,6 +150,120 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(GuildRole::Table)
+                    .col(
+                        ColumnDef::new(GuildRole::Id)
+                            .big_integer()
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(GuildRole::Origin).json_binary().null())
+                    .col(
+                        ColumnDef::new(GuildRole::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(ColumnDef::new(GuildRole::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(GuildRole::DeletedAt).timestamp())
+                    .col(ColumnDef::new(GuildRole::GuildId).big_integer().not_null())
+                    .col(ColumnDef::new(GuildRole::Name).string().not_null())
+                    .col(ColumnDef::new(GuildRole::Color).string().null())
+                    .col(
+                        ColumnDef::new(GuildRole::Privileges)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
+                    .col(
+                        ColumnDef::new(GuildRole::Configuration)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
+                    .col(
+                        ColumnDef::new(GuildRole::IsDefault)
+                            .boolean()
+                            .not_null()
+                            .default(false)
+                    )
+                    .col(
+                        ColumnDef::new(GuildRole::Position)
+                            .small_integer()
+                            .not_null(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(GuildRole::Table)
+                            .from_col(GuildRole::GuildId)
+                            .to_tbl(Guild::Table)
+                            .to_col(Guild::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .index(Index::create()
+                        //.name("idx_guild_member_role_position")
+                        .table(GuildRole::Table)
+                        .col(GuildRole::GuildId)
+                        .col(GuildRole::Position)
+                        .unique()
+                    )
+                    .to_owned()
+            ).await?;
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(GuildMember::Table)
+                    .col(ColumnDef::new(GuildMember::GuildId).big_integer().not_null())
+                    .col(ColumnDef::new(GuildMember::MemberId).big_integer().not_null())
+                    .col(ColumnDef::new(GuildMember::JoinedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(ColumnDef::new(GuildMember::RoleId).big_integer().null())
+                    .col(ColumnDef::new(GuildMember::Privileges).json_binary().not_null().default(blank_json.clone()))
+                    .col(ColumnDef::new(GuildMember::ProfileOverwrites).json_binary().default(blank_json.clone()))
+                    .col(ColumnDef::new(GuildMember::Configuration).json_binary().not_null().default(blank_json.clone()))
+                    .primary_key(
+                        Index::create()
+                            .col(GuildMember::GuildId)
+                            .col(GuildMember::MemberId)
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(GuildMember::Table)
+                            .from_col(GuildMember::GuildId)
+                            .to_tbl(Guild::Table)
+                            .to_col(Guild::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(GuildMember::Table)
+                            .from_col(GuildMember::MemberId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(GuildMember::Table)
+                            .from_col(GuildMember::RoleId)
+                            .to_tbl(GuildRole::Table)
+                            .to_col(GuildRole::Id)
+                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+
+                    .to_owned(),
+
+            ).await?;
+
         manager
             .create_type(
                 Type::create()
@@ -418,6 +532,9 @@ impl MigrationTrait for Migration {
             .drop_type(Type::drop().name(ChannelType::Table).to_owned())
             .await?;
         manager
+            .drop_table(Table::drop().table(GuildRole::Table).to_owned())
+            .await?;
+        manager
             .drop_table(Table::drop().table(Guild::Table).to_owned())
             .await?;
         manager
@@ -479,6 +596,18 @@ enum Guild {
     Name,
     Configuration,
     Description,
+}
+
+#[derive(DeriveIden)]
+enum GuildMember {
+    Table,
+    GuildId,
+    MemberId,
+    JoinedAt,
+    RoleId,
+    Privileges,
+    ProfileOverwrites,
+    Configuration,
 }
 
 #[derive(DeriveIden)]
@@ -554,4 +683,34 @@ enum Comment {
     ParentId,
     Payload,
     Metadata,
+}
+
+#[derive(DeriveIden)]
+enum SystemRole{
+    Table,
+    Id,
+    CreatedAt,
+    UpdatedAt,
+    Name,
+    Description,
+    Color,
+    Privileges,
+    Configuration,
+}
+
+#[derive(DeriveIden)]
+enum GuildRole {
+    Table,
+    Id,
+    Origin,
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
+    GuildId,
+    Name,
+    Color,
+    Privileges,
+    Configuration,
+    Position,
+    IsDefault,
 }

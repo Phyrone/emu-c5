@@ -52,6 +52,7 @@ impl PrimaryKeyTrait for PrimaryKey {
 pub enum Relation {
     Comment,
     Guild,
+    GuildMember,
     Message,
     Post,
     User,
@@ -78,6 +79,7 @@ impl RelationTrait for Relation {
         match self {
             Self::Comment => Entity::has_many(super::comment::Entity).into(),
             Self::Guild => Entity::has_many(super::guild::Entity).into(),
+            Self::GuildMember => Entity::has_many(super::guild_member::Entity).into(),
             Self::Message => Entity::has_many(super::message::Entity).into(),
             Self::Post => Entity::has_many(super::post::Entity).into(),
             Self::User => Entity::has_one(super::user::Entity).into(),
@@ -94,6 +96,12 @@ impl Related<super::comment::Entity> for Entity {
 impl Related<super::guild::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Guild.def()
+    }
+}
+
+impl Related<super::guild_member::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::GuildMember.def()
     }
 }
 
@@ -123,6 +131,8 @@ pub enum RelatedEntity {
     Comment,
     #[sea_orm(entity = "super::guild::Entity")]
     Guild,
+    #[sea_orm(entity = "super::guild_member::Entity")]
+    GuildMember,
     #[sea_orm(entity = "super::message::Entity")]
     Message,
     #[sea_orm(entity = "super::post::Entity")]

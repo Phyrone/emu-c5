@@ -78,11 +78,12 @@ sqlx = { version = "0.8", features = ["all-databases", "uuid", "regexp", "runtim
 seaography = { version = "1.1", features = [
     "with-chrono", "with-json", "with-uuid", "with-postgres-array"
 ] }
-redis = { version = "0.31.0", features = ["cluster", "cluster-async", "r2d2", "tokio-comp"] }
+redis = { version = "0.32", features = ["cluster", "cluster-async", "r2d2", "tokio-comp"] }
 
 # Error Handling
-error-stack = { version = "0.5", features = ["serde"] }
-thiserror = "2.0"
+error-stack = { version = "0.5", features = ["serde", "backtrace", "anyhow"] }
+thiserror = { version = "2.0", features = ["std"] }
+anyhow = { version = "1.0", features = ["std", "backtrace"] }
 
 # Serde
 serde = { version = "1.0", features = ["alloc", "derive", "rc"] }
