@@ -24,6 +24,7 @@ pub struct Model {
     pub session_secret: Vec<u8>,
     pub session_generation: i16,
     pub profile: i64,
+    pub preferences: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -38,6 +39,7 @@ pub enum Column {
     SessionSecret,
     SessionGeneration,
     Profile,
+    Preferences,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -71,6 +73,7 @@ impl ColumnTrait for Column {
             Self::SessionSecret => ColumnType::VarBinary(StringLen::None).def().unique(),
             Self::SessionGeneration => ColumnType::SmallInteger.def(),
             Self::Profile => ColumnType::BigInteger.def().unique(),
+            Self::Preferences => ColumnType::JsonBinary.def(),
         }
     }
 }

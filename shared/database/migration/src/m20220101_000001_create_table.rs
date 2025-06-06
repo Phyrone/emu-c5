@@ -80,6 +80,12 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .unique_key(),
                     )
+                    .col(
+                        ColumnDef::new(User::Preferences)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .from_tbl(User::Table)
@@ -438,6 +444,7 @@ enum User {
     SessionSecret,
     SessionGeneration,
     Profile,
+    Preferences,
 }
 
 #[derive(DeriveIden)]
