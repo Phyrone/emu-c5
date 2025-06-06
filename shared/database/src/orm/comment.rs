@@ -15,6 +15,7 @@ impl EntityName for Entity {
 #[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel, Eq, Serialize, Deserialize)]
 pub struct Model {
     pub id: i64,
+    pub origin: Option<Json>,
     pub author_id: i64,
     pub post_id: i64,
     pub parent_id: Option<i64>,
@@ -28,6 +29,7 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
 pub enum Column {
     Id,
+    Origin,
     AuthorId,
     PostId,
     ParentId,
@@ -62,6 +64,7 @@ impl ColumnTrait for Column {
     fn def(&self) -> ColumnDef {
         match self {
             Self::Id => ColumnType::BigInteger.def(),
+            Self::Origin => ColumnType::JsonBinary.def().null(),
             Self::AuthorId => ColumnType::BigInteger.def(),
             Self::PostId => ColumnType::BigInteger.def(),
             Self::ParentId => ColumnType::BigInteger.def().null(),

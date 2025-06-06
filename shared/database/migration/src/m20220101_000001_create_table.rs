@@ -9,7 +9,6 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
 
-
         manager
             .create_table(
                 Table::create()
@@ -20,6 +19,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Profile::Origin).json_binary().null())
                     .col(ColumnDef::new(Profile::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Profile::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Profile::DeletedAt).timestamp())
@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        
+
         manager
             .create_table(
                 Table::create()
@@ -95,6 +95,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(UserContent::Origin).json_binary().null())
                     .col(
                         ColumnDef::new(UserContent::AuthorId)
                             .big_integer()
@@ -130,7 +131,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-
         manager
             .create_table(
                 Table::create()
@@ -141,6 +141,12 @@ impl MigrationTrait for Migration {
                             .primary_key()
                             .auto_increment()
                             .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Guild::Origin)
+                            .json_binary()
+                            .null()
+                            .comment("Origin of the guild, used for federation"),
                     )
                     .col(ColumnDef::new(Guild::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Guild::UpdatedAt).timestamp().not_null())
@@ -205,6 +211,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Channel::Origin).json_binary().null())
                     .col(ColumnDef::new(Channel::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Channel::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Channel::DeletedAt).timestamp())
@@ -229,6 +236,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Message::Origin).json_binary().null())
                     .col(ColumnDef::new(Message::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Message::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Message::DeletedAt).timestamp())
@@ -288,6 +296,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Post::Origin).json_binary().null())
                     .col(ColumnDef::new(Post::AuthorId).big_integer().not_null())
                     .col(ColumnDef::new(Post::CreatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Post::UpdatedAt).timestamp().not_null())
@@ -328,6 +337,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Comment::Origin).json_binary().null())
                     .col(ColumnDef::new(Comment::AuthorId).big_integer().not_null())
                     .col(ColumnDef::new(Comment::PostId).big_integer().not_null())
                     .col(ColumnDef::new(Comment::ParentId).big_integer().null())
@@ -408,6 +418,7 @@ enum User {
 enum Profile {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -427,6 +438,7 @@ enum BlobStore {
 enum UserContent {
     Table,
     Id,
+    Origin,
     AuthorId,
     CreatedAt,
     UpdatedAt,
@@ -438,6 +450,7 @@ enum UserContent {
 enum Guild {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -468,6 +481,7 @@ enum ChannelTypeValues {
 enum Channel {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -481,6 +495,7 @@ enum Channel {
 enum Message {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -495,6 +510,7 @@ enum Message {
 enum Post {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -508,6 +524,7 @@ enum Post {
 enum Comment {
     Table,
     Id,
+    Origin,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
