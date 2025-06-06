@@ -12,3 +12,4 @@ readme.workspace = true
 [dependencies]
 tokio.workspace = true
 sea-orm-migration.workspace = true
+serde_json.workspace = true

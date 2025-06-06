@@ -55,7 +55,6 @@ pub enum Relation {
     Message,
     Post,
     User,
-    UserContent,
 }
 
 impl ColumnTrait for Column {
@@ -82,7 +81,6 @@ impl RelationTrait for Relation {
             Self::Message => Entity::has_many(super::message::Entity).into(),
             Self::Post => Entity::has_many(super::post::Entity).into(),
             Self::User => Entity::has_one(super::user::Entity).into(),
-            Self::UserContent => Entity::has_many(super::user_content::Entity).into(),
         }
     }
 }
@@ -117,12 +115,6 @@ impl Related<super::user::Entity> for Entity {
     }
 }
 
-impl Related<super::user_content::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserContent.def()
-    }
-}
-
 impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
@@ -137,6 +129,4 @@ pub enum RelatedEntity {
     Post,
     #[sea_orm(entity = "super::user::Entity")]
     User,
-    #[sea_orm(entity = "super::user_content::Entity")]
-    UserContent,
 }

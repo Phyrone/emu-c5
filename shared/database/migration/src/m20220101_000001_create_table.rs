@@ -1,6 +1,7 @@
 use crate::extension::postgres::Type;
-use crate::sea_orm::{EnumIter, Iterable};
+use crate::sea_orm::{DeriveValueType, EnumIter, Iterable};
 use sea_orm_migration::{prelude::*, schema::*};
+use serde_json::json;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -8,6 +9,7 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        let blank_json = Value::Json(Option::from(Box::new(json!({}))));
 
         manager
             .create_table(
@@ -20,7 +22,12 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(Profile::Origin).json_binary().null())
-                    .col(ColumnDef::new(Profile::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Profile::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Profile::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Profile::DeletedAt).timestamp())
                     .col(ColumnDef::new(Profile::UserId).big_integer().not_null())
@@ -41,7 +48,9 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(User::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(User::CreatedAt).timestamp().not_null()
+                        .default(Expr::current_timestamp())
+                    )
                     .col(ColumnDef::new(User::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(User::DeletedAt).timestamp())
                     .col(
@@ -87,53 +96,6 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(UserContent::Table)
-                    .col(
-                        ColumnDef::new(UserContent::Id)
-                            .big_integer()
-                            .primary_key()
-                            .auto_increment()
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(UserContent::Origin).json_binary().null())
-                    .col(
-                        ColumnDef::new(UserContent::AuthorId)
-                            .big_integer()
-                            .not_null(),
-                    )
-                    .col(
-                        ColumnDef::new(UserContent::CreatedAt)
-                            .timestamp()
-                            .not_null(),
-                    )
-                    .col(
-                        ColumnDef::new(UserContent::UpdatedAt)
-                            .timestamp()
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(UserContent::Checksum).string().not_null())
-                    .col(
-                        ColumnDef::new(UserContent::Metadata)
-                            .json_binary()
-                            .not_null()
-                            .default(Value::Json(None)),
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
-                            .from_tbl(UserContent::Table)
-                            .from_col(UserContent::AuthorId)
-                            .to_tbl(Profile::Table)
-                            .to_col(Profile::Id)
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_table(
-                Table::create()
                     .table(Guild::Table)
                     .col(
                         ColumnDef::new(Guild::Id)
@@ -148,18 +110,27 @@ impl MigrationTrait for Migration {
                             .null()
                             .comment("Origin of the guild, used for federation"),
                     )
-                    .col(ColumnDef::new(Guild::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Guild::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Guild::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Guild::DeletedAt).timestamp())
                     .col(ColumnDef::new(Guild::OwnerId).big_integer().not_null())
                     .col(ColumnDef::new(Guild::Name).string().not_null())
-                    .col(ColumnDef::new(Guild::Icon).big_integer().null())
-                    .col(ColumnDef::new(Guild::Banner).big_integer().null())
+                    .col(
+                        ColumnDef::new(Guild::Configuration)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
                     .col(
                         ColumnDef::new(Guild::Description)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .foreign_key(
                         ForeignKey::create()
@@ -168,24 +139,6 @@ impl MigrationTrait for Migration {
                             .to_tbl(Profile::Table)
                             .to_col(Profile::Id)
                             .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
-                            .from_tbl(Guild::Table)
-                            .from_col(Guild::Banner)
-                            .to_tbl(UserContent::Table)
-                            .to_col(UserContent::Id)
-                            .on_delete(ForeignKeyAction::SetNull)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
-                            .from_tbl(Guild::Table)
-                            .from_col(Guild::Icon)
-                            .to_tbl(UserContent::Table)
-                            .to_col(UserContent::Id)
-                            .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
@@ -212,7 +165,12 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(Channel::Origin).json_binary().null())
-                    .col(ColumnDef::new(Channel::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Channel::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Channel::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Channel::DeletedAt).timestamp())
                     .col(ColumnDef::new(Channel::GuildId).big_integer().null())
@@ -222,6 +180,38 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Channel::Type)
                             .custom(ChannelType::Table)
                             .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Channel::Configuration)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
+                    .check(SimpleExpr::or(
+                        Expr::column(Channel::Type)
+                            .eq(ChannelTypeValues::Direct.to_string())
+                            .and(Expr::column(Channel::GuildId).is_null()),
+                        Expr::column(Channel::Type)
+                            .ne(ChannelTypeValues::Direct.to_string())
+                            .and(Expr::column(Channel::GuildId).is_not_null()),
+                    ))
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Channel::Table)
+                            .from_col(Channel::GuildId)
+                            .to_tbl(Guild::Table)
+                            .to_col(Guild::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(Channel::Table)
+                            .from_col(Channel::ParentId)
+                            .to_tbl(Channel::Table)
+                            .to_col(Channel::Id)
+                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
@@ -237,7 +227,12 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(Message::Origin).json_binary().null())
-                    .col(ColumnDef::new(Message::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Message::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Message::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Message::DeletedAt).timestamp())
                     .col(ColumnDef::new(Message::AuthorId).big_integer().not_null())
@@ -247,13 +242,13 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Message::Payload)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .col(
                         ColumnDef::new(Message::Metadata)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .foreign_key(
                         ForeignKey::create()
@@ -298,7 +293,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Post::Origin).json_binary().null())
                     .col(ColumnDef::new(Post::AuthorId).big_integer().not_null())
-                    .col(ColumnDef::new(Post::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Post::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Post::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Post::DeletedAt).timestamp())
                     .col(ColumnDef::new(Post::Title).string().not_null())
@@ -306,13 +306,13 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Post::Payload)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .col(
                         ColumnDef::new(Post::Metadata)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .foreign_key(
                         ForeignKey::create()
@@ -341,20 +341,25 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Comment::AuthorId).big_integer().not_null())
                     .col(ColumnDef::new(Comment::PostId).big_integer().not_null())
                     .col(ColumnDef::new(Comment::ParentId).big_integer().null())
-                    .col(ColumnDef::new(Comment::CreatedAt).timestamp().not_null())
+                    .col(
+                        ColumnDef::new(Comment::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Comment::UpdatedAt).timestamp().not_null())
                     .col(ColumnDef::new(Comment::DeletedAt).timestamp())
                     .col(
                         ColumnDef::new(Comment::Payload)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .col(
                         ColumnDef::new(Comment::Metadata)
                             .json_binary()
                             .not_null()
-                            .default(Value::Json(None)),
+                            .default(blank_json.clone()),
                     )
                     .foreign_key(
                         ForeignKey::create()
@@ -392,7 +397,28 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
+            .drop_table(Table::drop().table(Comment::Table).to_owned())
+            .await?;
+        manager
             .drop_table(Table::drop().table(Post::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Message::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Channel::Table).to_owned())
+            .await?;
+        manager
+            .drop_type(Type::drop().name(ChannelType::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Guild::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(User::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Profile::Table).to_owned())
             .await?;
 
         Ok(())
@@ -435,18 +461,6 @@ enum BlobStore {
 }
 
 #[derive(DeriveIden)]
-enum UserContent {
-    Table,
-    Id,
-    Origin,
-    AuthorId,
-    CreatedAt,
-    UpdatedAt,
-    Checksum,
-    Metadata,
-}
-
-#[derive(DeriveIden)]
 enum Guild {
     Table,
     Id,
@@ -456,8 +470,7 @@ enum Guild {
     DeletedAt,
     OwnerId,
     Name,
-    Icon,
-    Banner,
+    Configuration,
     Description,
 }
 
@@ -466,7 +479,7 @@ enum ChannelType {
     Table,
 }
 
-#[derive(EnumIter, Iden)]
+#[derive(EnumIter, DeriveIden)]
 enum ChannelTypeValues {
     Direct,
     Dummy,
@@ -488,6 +501,7 @@ enum Channel {
     GuildId,
     ParentId,
     Name,
+    Configuration,
     Type,
 }
 

@@ -24,6 +24,7 @@ pub struct Model {
     pub parent_id: Option<i64>,
     pub name: String,
     pub r#type: ChannelType,
+    pub configuration: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -37,6 +38,7 @@ pub enum Column {
     ParentId,
     Name,
     Type,
+    Configuration,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -53,6 +55,8 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
+    SelfRef,
+    Guild,
     Message,
 }
 
@@ -69,6 +73,7 @@ impl ColumnTrait for Column {
             Self::ParentId => ColumnType::BigInteger.def().null(),
             Self::Name => ColumnType::String(StringLen::None).def(),
             Self::Type => ChannelType::db_type().get_column_type().to_owned().def(),
+            Self::Configuration => ColumnType::JsonBinary.def(),
         }
     }
 }
@@ -76,8 +81,22 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
+            Self::SelfRef => Entity::belongs_to(Entity)
+                .from(Column::ParentId)
+                .to(Column::Id)
+                .into(),
+            Self::Guild => Entity::belongs_to(super::guild::Entity)
+                .from(Column::GuildId)
+                .to(super::guild::Column::Id)
+                .into(),
             Self::Message => Entity::has_many(super::message::Entity).into(),
         }
+    }
+}
+
+impl Related<super::guild::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Guild.def()
     }
 }
 
@@ -91,6 +110,12 @@ impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
 pub enum RelatedEntity {
+    #[sea_orm(entity = "Entity", def = "Relation::SelfRef.def()")]
+    SelfRef,
+    #[sea_orm(entity = "super::guild::Entity")]
+    Guild,
     #[sea_orm(entity = "super::message::Entity")]
     Message,
+    #[sea_orm(entity = "Entity", def = "Relation::SelfRef.def().rev()")]
+    SelfRefReverse,
 }

@@ -70,7 +70,6 @@ pub enum DatabaseConnectError {
 
 impl DB {
     pub async fn new(config: &DatabaseConfig) -> error_stack::Result<Self, DatabaseConnectError> {
-
         let (database, database_ro) = try_join!(
             async {
                 let database = Database::connect(&config.database_url)

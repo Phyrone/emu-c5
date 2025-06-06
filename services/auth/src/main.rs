@@ -24,8 +24,6 @@ async fn main() -> error_stack::Result<(), AuthServiceError> {
     let database = emu_shared_database::DB::new(&params.database)
         .await
         .change_context(AuthServiceError)?;
-    
-    
 
     Ok(())
 }

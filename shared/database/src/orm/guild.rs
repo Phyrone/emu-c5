@@ -21,8 +21,7 @@ pub struct Model {
     pub deleted_at: Option<DateTime>,
     pub owner_id: i64,
     pub name: String,
-    pub icon: Option<i64>,
-    pub banner: Option<i64>,
+    pub configuration: Json,
     pub description: Json,
 }
 
@@ -35,8 +34,7 @@ pub enum Column {
     DeletedAt,
     OwnerId,
     Name,
-    Icon,
-    Banner,
+    Configuration,
     Description,
 }
 
@@ -54,9 +52,8 @@ impl PrimaryKeyTrait for PrimaryKey {
 
 #[derive(Copy, Clone, Debug, EnumIter)]
 pub enum Relation {
+    Channel,
     Profile,
-    UserContent2,
-    UserContent1,
 }
 
 impl ColumnTrait for Column {
@@ -70,8 +67,7 @@ impl ColumnTrait for Column {
             Self::DeletedAt => ColumnType::DateTime.def().null(),
             Self::OwnerId => ColumnType::BigInteger.def(),
             Self::Name => ColumnType::String(StringLen::None).def(),
-            Self::Icon => ColumnType::BigInteger.def().null(),
-            Self::Banner => ColumnType::BigInteger.def().null(),
+            Self::Configuration => ColumnType::JsonBinary.def(),
             Self::Description => ColumnType::JsonBinary.def(),
         }
     }
@@ -80,19 +76,18 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
+            Self::Channel => Entity::has_many(super::channel::Entity).into(),
             Self::Profile => Entity::belongs_to(super::profile::Entity)
                 .from(Column::OwnerId)
                 .to(super::profile::Column::Id)
                 .into(),
-            Self::UserContent2 => Entity::belongs_to(super::user_content::Entity)
-                .from(Column::Banner)
-                .to(super::user_content::Column::Id)
-                .into(),
-            Self::UserContent1 => Entity::belongs_to(super::user_content::Entity)
-                .from(Column::Icon)
-                .to(super::user_content::Column::Id)
-                .into(),
         }
+    }
+}
+
+impl Related<super::channel::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Channel.def()
     }
 }
 
@@ -106,16 +101,8 @@ impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
 pub enum RelatedEntity {
+    #[sea_orm(entity = "super::channel::Entity")]
+    Channel,
     #[sea_orm(entity = "super::profile::Entity")]
     Profile,
-    #[sea_orm(
-        entity = "super::user_content::Entity",
-        def = "Relation::UserContent2.def()"
-    )]
-    UserContent2,
-    #[sea_orm(
-        entity = "super::user_content::Entity",
-        def = "Relation::UserContent1.def()"
-    )]
-    UserContent1,
 }

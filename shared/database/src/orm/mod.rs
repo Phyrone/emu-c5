@@ -10,16 +10,6 @@ pub mod post;
 pub mod profile;
 pub mod sea_orm_active_enums;
 pub mod user;
-pub mod user_content;
 
-seaography::register_entity_modules!([
-    channel,
-    comment,
-    guild,
-    message,
-    post,
-    profile,
-    user,
-    user_content,
-]);
+seaography::register_entity_modules!([channel, comment, guild, message, post, profile, user,]);
 seaography::register_active_enums!([sea_orm_active_enums::ChannelType,]);
