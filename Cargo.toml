@@ -23,29 +23,25 @@ homepage = "www.phyrone.de"
 readme = "README.md"
 
 [workspace.dependencies]
-# Workspace
-emu-shared-database = { path = "shared/database" }
 emu-shared-database-migration = { path = "shared/database/migration" }
 emu-shared-grpc = { path = "shared/grpc" }
 
 # Core
 chrono = { version = "0.4", features = ["default", "serde", "now"] }
 tempfile = { version = "3.20", features = ["getrandom"] }
+url = { version = "2.5.4", features = ["serde"] }
 rand = { version = "0.9", features = ["std"] }
-fastrand = { version = "2.3" }
+fastrand = { version = "2.3", features = ["std"] }
+uuid = { version = "1.17", features = ["v4", "rng-rand", "serde"] }
 
 # Utils
 hexafreeze = { version = "0.5" }
 postgresql_embedded = { version = "0.18", features = ["indicatif"] }
-
-#
-arti = { version = "1.4", features = ["full"] }
-
-# Cli
-dotenvy = { version = "0.15", features = ["clap"] }
 clap = { version = "4.5", features = ["env", "cargo", "derive", "string", "unicode"] }
 clap-num = { version = "1.2" }
 clap-verbosity-flag = { version = "3.0", features = ["tracing", "log"] }
+argon2 = { version = "0.5.3", features = ["std", "simple"] }
+webauthn-rs = { version = "0.5.1", features = ["conditional-ui", "danger-allow-state-serialisation", "resident-key-support", "workaround-google-passkey-specific-issues"] }
 
 
 # Async, Network, IO and Concurrency
@@ -55,11 +51,9 @@ futures-lite = { version = "2.6", features = [] }
 # Protobuf
 prost = { version = "0.13", features = ["prost-derive"] }
 tonic = { version = "0.13", features = ["zstd", "gzip", "deflate", "tls-ring"] }
-tonic-types = { version = "0.13" }
 tonic-build = { version = "0.13", features = [] }
 
 # Database
-nanoid = { version = "0.4" }
 sea-orm = { version = "1.1", features = [
     # Runtime
     "runtime-tokio", "runtime-tokio-rustls",
@@ -78,11 +72,11 @@ sea-orm-migration = { version = "1.1", features = [
 ] }
 sea-schema = { version = "0.16", features = ["log", "runtime-tokio", "sqlx-all", "with-serde"] }
 sea-orm-codegen = { version = "1.1" }
-sea-query = { version = "0.32", features = ["all-types", "all-features"] }
 sqlx = { version = "0.8", features = ["all-databases", "uuid", "regexp", "runtime-tokio", "chrono", "bit-vec", "runtime-tokio-rustls"] }
 seaography = { version = "1.1", features = [
     "with-chrono", "with-json", "with-uuid", "with-postgres-array"
 ] }
+redis = { version = "0.31.0", features = ["cluster", "cluster-async", "r2d2", "tokio-comp"] }
 
 # Error Handling
 error-stack = { version = "0.5", features = ["serde"] }
@@ -90,16 +84,14 @@ thiserror = "2.0"
 
 # Serde
 serde = { version = "1.0", features = ["alloc", "derive", "rc"] }
+rmp = {version = "0.8",features = ["std"]}
+rmp-serde = {version = "1.3"}
 
 
 # Logging and Tracing
 sentry = { version = "0.38", features = ["anyhow", "log", "tower", "tracing"] }
 tracing = { version = "0.1", features = ["log"] }
 pretty_env_logger = { version = "0.5" }
-
-# Testing and Benches
-rstest = { version = "0.25", features = ["async-timeout", "crate-name"] }
-criterion = { version = "0.6", features = ["rayon", "async_tokio", "html_reports"] }
 
 
 
@@ -108,4 +100,5 @@ incremental = true
 
 [profile.release]
 opt-level = 3
+codegen-units = 1
 lto = "fat"

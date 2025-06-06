@@ -23,6 +23,7 @@ pub struct Model {
     pub password: Option<String>,
     pub session_secret: Vec<u8>,
     pub session_generation: i16,
+    pub profile: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -36,6 +37,7 @@ pub enum Column {
     Password,
     SessionSecret,
     SessionGeneration,
+    Profile,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -51,7 +53,9 @@ impl PrimaryKeyTrait for PrimaryKey {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]
-pub enum Relation {}
+pub enum Relation {
+    Profile,
+}
 
 impl ColumnTrait for Column {
     type EntityName = Entity;
@@ -66,17 +70,32 @@ impl ColumnTrait for Column {
             Self::Password => ColumnType::String(StringLen::None).def().null(),
             Self::SessionSecret => ColumnType::VarBinary(StringLen::None).def().unique(),
             Self::SessionGeneration => ColumnType::SmallInteger.def(),
+            Self::Profile => ColumnType::BigInteger.def().unique(),
         }
     }
 }
 
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
-        panic!("No RelationDef")
+        match self {
+            Self::Profile => Entity::belongs_to(super::profile::Entity)
+                .from(Column::Profile)
+                .to(super::profile::Column::Id)
+                .into(),
+        }
+    }
+}
+
+impl Related<super::profile::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Profile.def()
     }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
-pub enum RelatedEntity {}
+pub enum RelatedEntity {
+    #[sea_orm(entity = "super::profile::Entity")]
+    Profile,
+}

@@ -11,4 +11,12 @@ readme.workspace = true
 [dependencies]
 tokio.workspace = true
 emu-shared-grpc.workspace = true
-argon2 = { version = "0.5.3", features = ["std", "simple"] }
+redis.workspace = true
+webauthn-rs.workspace = true
+clap.workspace = true
+url.workspace = true
+argon2.workspace = true
+pretty_env_logger.workspace = true
+clap-verbosity-flag.workspace = true
+tracing.workspace = true
+

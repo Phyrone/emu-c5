@@ -45,7 +45,9 @@ impl PrimaryKeyTrait for PrimaryKey {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]
-pub enum Relation {}
+pub enum Relation {
+    Profile,
+}
 
 impl ColumnTrait for Column {
     type EntityName = Entity;
@@ -63,11 +65,25 @@ impl ColumnTrait for Column {
 
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
-        panic!("No RelationDef")
+        match self {
+            Self::Profile => Entity::belongs_to(super::profile::Entity)
+                .from(Column::AuthorId)
+                .to(super::profile::Column::Id)
+                .into(),
+        }
+    }
+}
+
+impl Related<super::profile::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Profile.def()
     }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelatedEntity)]
-pub enum RelatedEntity {}
+pub enum RelatedEntity {
+    #[sea_orm(entity = "super::profile::Entity")]
+    Profile,
+}

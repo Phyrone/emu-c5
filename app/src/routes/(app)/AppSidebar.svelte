@@ -1,5 +1,4 @@
 <script lang="ts">
-    import {HomeIcon} from '@lucide/svelte';
 
     type Props = {
         sidebar_open: boolean;
@@ -10,11 +9,11 @@
 
 </script>
 <nav class={[
-    'flex flex-col transition-all bg-base-200',
+    'flex flex-col transition-all bg-base-200 drop-shadow-sm',
     'hidden sm:flex fixed left-0 bottom-0 h-screen z-20',
     '@container',
     (!sidebar_open) && 'w-20',
-    (open_on_hover && !sidebar_open) && 'hover:w-72',
+    (open_on_hover && !sidebar_open) && 'hover:w-72 hover:drop-shadow-2xl',
     sidebar_open && 'w-72',
 ]}>
     <div class="flex-none h-16"></div>

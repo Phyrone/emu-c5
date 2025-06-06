@@ -8,6 +8,28 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+
+
+        manager
+            .create_table(
+                Table::create()
+                    .table(Profile::Table)
+                    .col(
+                        ColumnDef::new_with_type(Profile::Id, ColumnType::BigInteger)
+                            .primary_key()
+                            .auto_increment()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Profile::CreatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Profile::UpdatedAt).timestamp().not_null())
+                    .col(ColumnDef::new(Profile::DeletedAt).timestamp())
+                    .col(ColumnDef::new(Profile::UserId).big_integer().not_null())
+                    .col(ColumnDef::new(Profile::Name).string().not_null())
+                    .col(ColumnDef::new(Profile::ProfilePicture).big_integer().null())
+                    .to_owned(),
+            )
+            .await?;
+        
         manager
             .create_table(
                 Table::create()
@@ -42,6 +64,21 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(0)
                             .comment("Session generation of session token, on overflow it will be reset to 0 this is used to invalidate cached previous session tokens"),
+                    )
+                    .col(
+                        ColumnDef::new(User::Profile)
+                            .big_integer()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(User::Table)
+                            .from_col(User::Profile)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
             )
@@ -80,29 +117,19 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(Value::Json(None)),
                     )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from_tbl(UserContent::Table)
+                            .from_col(UserContent::AuthorId)
+                            .to_tbl(Profile::Table)
+                            .to_col(Profile::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await?;
 
-        manager
-            .create_table(
-                Table::create()
-                    .table(Profile::Table)
-                    .col(
-                        ColumnDef::new_with_type(Profile::Id, ColumnType::BigInteger)
-                            .primary_key()
-                            .auto_increment()
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(Profile::CreatedAt).timestamp().not_null())
-                    .col(ColumnDef::new(Profile::UpdatedAt).timestamp().not_null())
-                    .col(ColumnDef::new(Profile::DeletedAt).timestamp())
-                    .col(ColumnDef::new(Profile::UserId).big_integer().not_null())
-                    .col(ColumnDef::new(Profile::Name).string().not_null())
-                    .col(ColumnDef::new(Profile::ProfilePicture).big_integer().null())
-                    .to_owned(),
-            )
-            .await?;
 
         manager
             .create_table(
@@ -374,6 +401,7 @@ enum User {
     Password,
     SessionSecret,
     SessionGeneration,
+    Profile,
 }
 
 #[derive(DeriveIden)]
