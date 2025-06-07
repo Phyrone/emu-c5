@@ -1,11 +1,7 @@
 <script lang="ts">
+	type Props = {
+		sidebar_open: boolean;
+	};
 
-    type Props = {
-        sidebar_open: boolean;
-    };
-
-    let {sidebar_open = $bindable()}: Props = $props();
-
+	let { sidebar_open = $bindable() }: Props = $props();
 </script>
-
-

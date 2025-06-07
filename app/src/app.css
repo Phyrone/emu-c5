@@ -10,6 +10,6 @@
 .callout-disabled {
 	-webkit-touch-callout: none;
 }
-.callout-enabled{
+.callout-enabled {
 	-webkit-touch-callout: default;
 }

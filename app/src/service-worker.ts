@@ -3,7 +3,7 @@
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
 
-import {ServiceWorkerInstruction} from "./lib/sw-msg";
+import { ServiceWorkerInstruction } from './lib/sw-msg';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 import { build, files, version, prerendered } from '$service-worker';
@@ -68,9 +68,8 @@ async function offline_first_assets(event: FetchEvent): Promise<Response> {
 sw.addEventListener('message', (event: ExtendableMessageEvent) => {
 	let instruction = ServiceWorkerInstruction.parse(event.data);
 
-	if(instruction.type === 'SKIP_WAITING'){
-		event.waitUntil(sw.skipWaiting())
+	if (instruction.type === 'SKIP_WAITING') {
+		event.waitUntil(sw.skipWaiting());
 	}
-
 });
 console.log('[ServiceWorker] Initialized 1');

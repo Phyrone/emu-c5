@@ -2,7 +2,6 @@
 	import { onMount, type Snippet } from 'svelte';
 	import AppSkeleton from './AppSkeleton.svelte';
 
-
 	type Props = {
 		children: Snippet;
 	};
