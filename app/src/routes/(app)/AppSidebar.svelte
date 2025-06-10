@@ -25,5 +25,5 @@
 	</div>
 </nav>
 <div
-	class={[sidebar_open ? 'w-72' : 'w-20', 'flex-none', 'hidden', 'sm:block', 'transition-all']}
+	class={[ /* sidebar_open ? 'w-72' : 'w-20' */  sidebar_open ? 'w-72 lg:w-20' : 'w-20', 'flex-none', 'hidden', 'sm:block', 'transition-all']}
 ></div>

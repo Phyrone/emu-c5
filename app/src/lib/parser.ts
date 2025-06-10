@@ -9,5 +9,5 @@ export function parse_user(user: string): { username: string; hostname?: string 
 	if (!match) return undefined;
 
 	const { username, hostname } = match.groups as { username: string; hostname?: string };
-	return { username: username.toLowerCase(), hostname: hostname?.toLowerCase() };
+	return { email: username.toLowerCase(), hostname: hostname?.toLowerCase() };
 }

@@ -6,3 +6,6 @@ onlyBuiltDependencies:
   - esbuild
   - protobufjs
   - vue-demi
+syncInjectedDepsAfterScripts:
+  - build
+injectWorkspacePackages: true

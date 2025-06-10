@@ -19,9 +19,9 @@
 </script>
 
 <AppNavbar bind:sidebar_open />
-<div class="flex min-h-full">
+<div class="flex flex-auto">
 	<AppSidebar bind:sidebar_open open_on_hover={true} />
-	<main id="content">
+	<main id="content" class="flex-auto">
 		{@render children?.()}
 	</main>
 </div>

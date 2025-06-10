@@ -4,7 +4,7 @@
 
 	type DockGroup = 'home' | 'profile';
 	let dock_group: DockGroup | undefined = $derived.by(() => {
-		if (page.route.id?.startsWith('/(app)/self')) {
+		if (page.route.id?.startsWith('/(app)/(self)')) {
 			return 'profile';
 		} else {
 			return 'home';

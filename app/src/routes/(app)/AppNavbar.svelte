@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SearchIcon, UserIcon, MenuIcon } from '@lucide/svelte';
+	import { SearchIcon, UserIcon, MenuIcon, LogInIcon } from '@lucide/svelte';
 
 	type Props = {
 		sidebar_open: boolean;
@@ -24,7 +24,7 @@
 		<a href="#content" class="text-primary-content btn-link sr-only focus:not-sr-only"
 			>Skip to content</a
 		>
-		<a href="/" class=" btn btn-ghost btn-lg uppercase">emu</a>
+		<a href="/" class="hidden lg:inline-flex btn btn-ghost btn-lg uppercase">emu</a>
 	</div>
 	<div class="navbar-center">
 		<label class="floating-label">
@@ -36,9 +36,14 @@
 		</label>
 	</div>
 	<div class="navbar-end">
-		<button class="btn btn-ghost btn-circle btn-lg">
-			<UserIcon />
-		</button>
+		<div class="dropdown dropdown-bottom dropdown-end">
+			<button tabindex="0" class="btn btn-ghost btn-circle btn-lg">
+				<UserIcon />
+			</button>
+			<div tabindex="0" class="dropdown-content bg-base-100 w-52 p-2 shadow">
+				<a class="btn btn-primary w-full" href="/sign-in"><LogInIcon /> Sign In</a>
+			</div>
+		</div>
 	</div>
 </nav>
 <div class="hidden h-16 sm:block"></div>

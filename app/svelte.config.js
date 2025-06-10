@@ -13,13 +13,13 @@ function getAdapter() {
 	switch (BUILD_TARGET) {
 		case 'node':
 			return adapter_node({
-				out: 'build',
+				out: 'dist',
 				precompress: BUILD_PRECOMPRESS
 			});
 		case 'spa':
 			return adapter_static({
-				assets: 'build',
-				pages: 'build',
+				assets: 'dist',
+				pages: 'dist',
 				fallback: 'index.html',
 				precompress: BUILD_PRECOMPRESS,
 				strict: false
