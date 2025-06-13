@@ -18,11 +18,13 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ github.token }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.actor }}/emu-c5-app
+          tags: ghcr.io/phyrone/emu-c5-app
           platforms: linux/amd64,linux/arm64
+          target: app
+          github-token: '${{ github.token }}'
