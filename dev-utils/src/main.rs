@@ -3,6 +3,7 @@ use crate::startup::{StartupParams, StartupSubcommand};
 use clap::Parser;
 use emu_shared_database_migration::{MIGRATIONS_TABLE_NAME, Migrator};
 use error_stack::ResultExt;
+use sea_orm::DbErr;
 use sea_orm_codegen::{
     DateTimeCrate, EntityTransformer, EntityWriterContext, WithPrelude, WithSerde,
 };
@@ -10,7 +11,6 @@ use sea_orm_migration::MigratorTrait;
 use sqlx::{Pool, Postgres};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use sea_orm::DbErr;
 use thiserror::Error;
 use tokio::process::Command;
 use tracing::debug;

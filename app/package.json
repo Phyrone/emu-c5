@@ -16,7 +16,6 @@
 		"lint": "prettier --check . && eslint .",
 		"grpc:gen": " protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=forceLong=bigint --ts_proto_opt=env=both --ts_proto_opt=oneof=unions-value --ts_proto_opt=esModuleInterop=true --ts_proto_opt=globalThisPolyfill=true --ts_proto_out=src/lib/grpc -I ../proto ../proto/*.proto",
 		"ts-to-zod": "ts-to-zod"
-
 	},
 	"devDependencies": {
 		"@bufbuild/protobuf": "^2.5.1",
@@ -79,6 +78,7 @@
 		"rxjs": "^7.8.2",
 		"superjson": "^2.2.2",
 		"svelte-french-toast": "^1.2.0",
+		"svelte-motion": "^0.12.2",
 		"svelte-persisted-store": "^0.12.0",
 		"sveltekit-sse": "^0.13.19",
 		"sweetalert2": "^11.22.0",

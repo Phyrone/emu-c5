@@ -1,0 +1,7 @@
+{
+  "fields": {
+    ".auth.session.SessionToken.signature" : [
+      "#[borsh(skip)]"
+    ]
+  }
+}

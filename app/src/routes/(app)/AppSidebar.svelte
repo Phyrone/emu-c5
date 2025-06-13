@@ -13,7 +13,7 @@
 		'fixed bottom-0 left-0 z-20 hidden h-screen sm:flex',
 		'@container',
 		!sidebar_open && 'w-20',
-		open_on_hover && !sidebar_open && 'hover:w-72 hover:drop-shadow-2xl',
+		open_on_hover && !sidebar_open && 'will-change-auto hover:w-72 hover:drop-shadow-2xl',
 		sidebar_open && 'w-72'
 	]}
 >

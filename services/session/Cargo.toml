@@ -1,5 +1,5 @@
 [package]
-name = "emu-service-auth"
+name = "emu-service-auth-session"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
@@ -9,19 +9,15 @@ homepage.workspace = true
 readme.workspace = true
 
 [dependencies]
-tokio.workspace = true
-emu-shared-grpc.workspace = true
-redis.workspace = true
-webauthn-rs.workspace = true
-clap.workspace = true
-url.workspace = true
-argon2.workspace = true
-pretty_env_logger.workspace = true
-clap-verbosity-flag.workspace = true
-tracing.workspace = true
-emu-shared-database.workspace = true
-schemars.workspace = true
 dotenvy.workspace = true
-error-stack.workspace = true
+clap.workspace = true
+clap-verbosity-flag.workspace = true
+emu-shared-database.workspace = true
+pretty_env_logger.workspace = true
+tokio.workspace = true
 thiserror.workspace = true
-
+error-stack.workspace = true
+sentry.workspace = true
+emu-shared-grpc.workspace = true
+tonic.workspace = true
+emu-shared-auth.workspace = true

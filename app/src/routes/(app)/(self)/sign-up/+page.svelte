@@ -76,23 +76,16 @@
             });
     }
 
-    onMount(() => {
+    onMount(async () => {
         if (!webauthn_supported) {
             return;
         }
         trigger_conditional_ui()
     })
 </script>
-<svelte:head>
-    <style>
-        body{
-            overscroll-behavior: none;
-        }
-    </style>
-</svelte:head>
 
 <div class="grid h-full w-full place-items-center bg-base-100 sm:bg-base-200">
-    <div class="w-full sm:max-w-96 sm:w-full bg-base-100  sm:shadow-lg px-10 py-10 sm:px-8 sm:py-6 transition-all rounded-sm">
+    <div class="w-full sm:max-w-96 sm:w-full bg-base-100  sm:shadow-lg px-10 py-10 sm:px-8 sm:py-6 transition-all">
         <!-- html ids are just placed so password managers can find the fields -->
         <form class="flex flex-col gap-4 sm:gap-6" onsubmit={signin}>
             <label class="floating-label">

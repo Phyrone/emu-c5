@@ -19,9 +19,7 @@ EXPOSE 3000
 CMD ["node", "dist/index.js"]
 
 
-
-FROM rust as emu-service-auth-builder
-
+FROM rust AS rust-builder-base
 RUN apt update && apt install -y \
     libssl-dev \
     pkg-config \
@@ -30,13 +28,27 @@ RUN apt update && apt install -y \
 RUN mkdir -p /output
 WORKDIR /app
 COPY . .
+
+FROM rust-builder-base AS emu-service-auth-builder
 RUN --mount=type=cache,target=/app/target/ \
     --mount=type=cache,target=/usr/local/cargo/git/db \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     cargo build --release --package emu-service-auth --bin emu-service-auth \
     && cp target/release/emu-service-auth /output/
 
+FROM rust-builder-base AS emu-service-session-builder
+RUN --mount=type=cache,target=/app/target/ \
+    --mount=type=cache,target=/usr/local/cargo/git/db \
+    --mount=type=cache,target=/usr/local/cargo/registry/ \
+    cargo build --release --package emu-service-auth --bin emu-service-auth \
+    && cp target/release/emu-service-auth /output/
+
+
+
 FROM debian:bookworm-slim AS emu-service-auth
 COPY --from=emu-service-auth-builder /output/emu-service-auth /usr/local/bin/emu-service-auth
+CMD ["/usr/local/bin/emu-service-auth"]
 
+FROM debian:bookworm-slim AS emu-service-session
+COPY --from=emu-service-session-builder /output/emu-service-auth /usr/local/bin/emu-service-auth
 CMD ["/usr/local/bin/emu-service-auth"]

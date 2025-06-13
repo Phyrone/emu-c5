@@ -59,7 +59,7 @@ impl SnowflakeServiceImpl {
 #[async_trait]
 impl SnowflakeService for SnowflakeServiceImpl {
     async fn snowflake_id(
-        self: std::sync::Arc<Self>,
+        &self,
         request: Request<SnowflakeIdRequest>,
     ) -> Result<Response<SnowflakeIdResponse>, Status> {
         let count = request.get_ref().count.unwrap_or(1).max(1);

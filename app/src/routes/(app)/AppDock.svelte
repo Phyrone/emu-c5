@@ -31,7 +31,7 @@
 			'dock-active': dock_group === 'profile',
 			'callout-disabled': true
 		}}
-		href="/self"
+		href="/profile"
 	>
 		<UserIcon />
 		Profile

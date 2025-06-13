@@ -4,7 +4,7 @@ use clap::{Args, ValueEnum};
 use emu_shared_database_migration::{Migrator, MigratorTrait};
 use error_stack::{FutureExt, Report, ResultExt};
 pub use orm::*;
-use sea_orm::{Database, DatabaseConnection, DbErr};
+use sea_orm::{Database, DatabaseConnection};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::try_join;

@@ -1,21 +1,43 @@
 import {z} from 'zod';
 
-export const SignInRequest = z.tuple([
-    /**
-     * Email or Username of the user
-     */
-    z.string(),
-    z.string(),
-    z.boolean()
-]);
+export const SignInRequest =  z.union([
+    z.object({
+        email: z.string(),
+        username: z.string(),
+        rememberMe: z.boolean(),
+        otp: z.string().optional(),
+    }),
+    // tuple representation is much smaller
+    z.tuple([
+        // email or username
+        z.string(),
+        // password
+        z.string(),
+        // remember_me
+        z.boolean(),
+        // OTP
+        z.string().optional()
+    ])
+])
 export type SignInRequest = z.infer<typeof SignInRequest>;
 
 export const SignInResponse = z.union([
-    z.tuple([]),
+    z.object({
+        email: z.string(),
+        username: z.string(),
+        rememberMe: z.boolean(),
+        otp: z.string().optional(),
+    }),
+    // tuple representation is much smaller
     z.tuple([
-        z.string(), // email or username
-        z.string(), // password
-        z.boolean() // remember_me
+        // email or username
+        z.string(),
+        // password
+        z.string(),
+        // remember_me
+        z.boolean(),
+        // OTP
+        z.string().optional()
     ])
 ])
 export type SignInResponse = z.infer<typeof SignInResponse>;

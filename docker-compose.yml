@@ -1,18 +1,22 @@
 # A docker compose file used for development evnvironments to run required services
 services:
-  app:
-    build:
-      context: .
-      target: app
-
-    ports:
-      - 3000:3000
-  emu-service-auth:
-    build:
-      context: .
-      target: emu-service-auth
-    environment:
-      - DATABASE_URL=postgresql://emu:password@postgres:5432/emu
+  #cloudflared:
+  #  image: cloudflare/cloudflared
+  #  restart: unless-stopped
+  #  command: tunnel --url app:3000
+  #app:
+  #  build:
+  #    context: .
+  #    target: app
+  #
+  #  ports:
+  #    - 3000:3000
+  #emu-service-auth:
+  #  build:
+  #    context: .
+  #    target: emu-service-auth
+  #  environment:
+  #    - DATABASE_URL=postgresql://emu:password@postgres:5432/emu
 
   # Databases
   postgres:

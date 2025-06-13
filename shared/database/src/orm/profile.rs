@@ -21,7 +21,7 @@ pub struct Model {
     pub deleted_at: Option<DateTime>,
     pub user_id: i64,
     pub name: String,
-    pub profile_picture: Option<i64>,
+    pub personalisation: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
@@ -33,7 +33,7 @@ pub enum Column {
     DeletedAt,
     UserId,
     Name,
-    ProfilePicture,
+    Personalisation,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -69,7 +69,7 @@ impl ColumnTrait for Column {
             Self::DeletedAt => ColumnType::DateTime.def().null(),
             Self::UserId => ColumnType::BigInteger.def(),
             Self::Name => ColumnType::String(StringLen::None).def(),
-            Self::ProfilePicture => ColumnType::BigInteger.def().null(),
+            Self::Personalisation => ColumnType::JsonBinary.def(),
         }
     }
 }

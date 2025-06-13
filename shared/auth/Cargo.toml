@@ -1,0 +1,29 @@
+[package]
+name = "emu-shared-auth"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+readme.workspace = true
+
+[dependencies]
+tokio.workspace = true
+emu-shared-database.workspace = true
+emu-shared-grpc.workspace = true
+serde.workspace = true
+borsh.workspace = true
+sha3.workspace = true
+hmac.workspace = true
+schemars.workspace = true
+chrono.workspace = true
+serde-big-array.workspace = true
+rmp-serde.workspace = true
+base64.workspace = true
+prost.workspace = true
+tonic.workspace = true
+thiserror.workspace = true
+error-stack.workspace = true
+
+

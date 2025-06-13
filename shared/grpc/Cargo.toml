@@ -9,6 +9,15 @@ authors.workspace = true
 [dependencies]
 prost.workspace = true
 tonic.workspace = true
+schemars.workspace = true
+serde.workspace = true
+borsh.workspace = true
+bytes.workspace = true
 
 [build-dependencies]
+hashbrown.workspace = true
+indexmap.workspace = true
+
+serde.workspace = true
+serde_json.workspace = true
 tonic-build.workspace = true

@@ -32,7 +32,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Profile::DeletedAt).timestamp())
                     .col(ColumnDef::new(Profile::UserId).big_integer().not_null())
                     .col(ColumnDef::new(Profile::Name).string().not_null())
-                    .col(ColumnDef::new(Profile::ProfilePicture).big_integer().null())
+                    .col(
+                        ColumnDef::new(Profile::Personalisation)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -69,10 +74,11 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(User::SessionGeneration)
-                            .small_integer()
+                            .tiny_integer()
                             .not_null()
                             .default(0)
-                            .comment("Session generation of session token, on overflow it will be reset to 0 this is used to invalidate cached previous session tokens"),
+                            .check(Expr::col(User::SessionGeneration).between(0,i8::MAX))
+                            .comment("session generation (used as cache bursting mechanism) overflow to 0 at 127 aka. x mod 128"),
                     )
                     .col(
                         ColumnDef::new(User::Profile)
@@ -190,7 +196,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(GuildRole::IsDefault)
                             .boolean()
                             .not_null()
-                            .default(false)
+                            .default(false),
                     )
                     .col(
                         ColumnDef::new(GuildRole::Position)
@@ -206,31 +212,60 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-                    .index(Index::create()
-                        //.name("idx_guild_member_role_position")
-                        .table(GuildRole::Table)
-                        .col(GuildRole::GuildId)
-                        .col(GuildRole::Position)
-                        .unique()
+                    .index(
+                        Index::create()
+                            //.name("idx_guild_member_role_position")
+                            .table(GuildRole::Table)
+                            .col(GuildRole::GuildId)
+                            .col(GuildRole::Position)
+                            .unique(),
                     )
-                    .to_owned()
-            ).await?;
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
                 Table::create()
                     .table(GuildMember::Table)
-                    .col(ColumnDef::new(GuildMember::GuildId).big_integer().not_null())
-                    .col(ColumnDef::new(GuildMember::MemberId).big_integer().not_null())
-                    .col(ColumnDef::new(GuildMember::JoinedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(GuildMember::GuildId)
+                            .big_integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(GuildMember::MemberId)
+                            .big_integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(GuildMember::JoinedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(GuildMember::RoleId).big_integer().null())
-                    .col(ColumnDef::new(GuildMember::Privileges).json_binary().not_null().default(blank_json.clone()))
-                    .col(ColumnDef::new(GuildMember::ProfileOverwrites).json_binary().default(blank_json.clone()))
-                    .col(ColumnDef::new(GuildMember::Configuration).json_binary().not_null().default(blank_json.clone()))
+                    .col(
+                        ColumnDef::new(GuildMember::Privileges)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
+                    .col(
+                        ColumnDef::new(GuildMember::ProfileOverwrites)
+                            .json_binary()
+                            .default(blank_json.clone()),
+                    )
+                    .col(
+                        ColumnDef::new(GuildMember::Configuration)
+                            .json_binary()
+                            .not_null()
+                            .default(blank_json.clone()),
+                    )
                     .primary_key(
                         Index::create()
                             .col(GuildMember::GuildId)
-                            .col(GuildMember::MemberId)
+                            .col(GuildMember::MemberId),
                     )
                     .foreign_key(
                         ForeignKey::create()
@@ -259,10 +294,9 @@ impl MigrationTrait for Migration {
                             .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
-
                     .to_owned(),
-
-            ).await?;
+            )
+            .await?;
 
         manager
             .create_type(
@@ -574,7 +608,8 @@ enum Profile {
     DeletedAt,
     UserId,
     Name,
-    ProfilePicture,
+    Personalisation,
+    //ProfilePicture,
     //ProfileBanner,
 }
 
@@ -686,7 +721,7 @@ enum Comment {
 }
 
 #[derive(DeriveIden)]
-enum SystemRole{
+enum SystemRole {
     Table,
     Id,
     CreatedAt,
