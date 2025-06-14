@@ -60,7 +60,7 @@
 		"@dicebear/core": "^9.2.2",
 		"@grpc/grpc-js": "^1.13.4",
 		"@inlang/paraglide-js": "^2.0.13",
-		"@lucide/svelte": "^0.511.0",
+		"@lucide/svelte": "^0.515.0",
 		"@msgpack/msgpack": "^3.1.2",
 		"@scalar/api-reference": "^1.31.1",
 		"@simplewebauthn/browser": "^13.1.0",
