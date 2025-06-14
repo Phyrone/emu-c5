@@ -23,7 +23,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          # Only push to ghcr.io on main branch or tags
+          push: ${{ github.ref_name == 'main' || github.ref_type == 'tag' }}
+          # push to latest tag on main branch and version tag on tags
           tags: 'ghcr.io/phyrone/emu-c5-app:${{ github.ref_name }}'
           platforms: linux/amd64,linux/arm64
           target: app
