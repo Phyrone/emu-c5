@@ -62,7 +62,7 @@ tokio = { version = "1.45.1", features = ["full", "mio", "tracing"] }
 futures-lite = { version = "2.6.0", features = [] }
 
 # Protobuf
-prost = { version = "0.13.5", features = ["prost-derive"] }
+prost = { version = "0.14.0", features = ["prost-derive"] }
 tonic = { version = "0.13.1", features = ["zstd", "gzip", "deflate", "tls-ring"] }
 tonic-build = { version = "0.13.1", features = [] }
 
