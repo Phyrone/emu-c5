@@ -152,8 +152,8 @@ importers:
         specifier: ^6.14.0
         version: 6.14.0
       '@types/serviceworker':
-        specifier: ^0.0.136
-        version: 0.0.136
+        specifier: ^0.0.139
+        version: 0.0.139
       daisyui:
         specifier: ^5.0.42
         version: 5.0.42
@@ -1378,8 +1378,8 @@ packages:
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
 
-  '@types/serviceworker@0.0.136':
-    resolution: {integrity: sha512-5lqryjGIegGNpkOcCfVg7j+v+aB128pEUpffB9mqUAX3sFq38mjtKTTRtAq2oLtt5Wg3Ex0G9EB52ha0qJfbsQ==}
+  '@types/serviceworker@0.0.139':
+    resolution: {integrity: sha512-x//6Zo+4hF9UbHIbUVc830KI5/2URFMgQbYvr98XEzdnJ2ZdP1UsaT8XXHgAeSgZPeRdEMFXrnQ5rS2zCV0vEQ==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -4996,7 +4996,7 @@ snapshots:
 
   '@types/resolve@1.20.2': {}
 
-  '@types/serviceworker@0.0.136': {}
+  '@types/serviceworker@0.0.139': {}
 
   '@types/unist@3.0.3': {}
 
