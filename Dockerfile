@@ -1,4 +1,5 @@
 FROM node:lts-slim AS node-build-base
+LABEL org.opencontainers.image.source="https://github.com/Phyrone/emu-c5"
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -46,9 +47,11 @@ RUN --mount=type=cache,target=/app/target/ \
 
 
 FROM debian:bookworm-slim AS emu-service-auth
+LABEL org.opencontainers.image.source="https://github.com/Phyrone/emu-c5"
 COPY --from=emu-service-auth-builder /output/emu-service-auth /usr/local/bin/emu-service-auth
 CMD ["/usr/local/bin/emu-service-auth"]
 
 FROM debian:bookworm-slim AS emu-service-session
+LABEL org.opencontainers.image.source="https://github.com/Phyrone/emu-c5"
 COPY --from=emu-service-session-builder /output/emu-service-auth /usr/local/bin/emu-service-auth
 CMD ["/usr/local/bin/emu-service-auth"]
